@@ -1,3 +1,4 @@
+// Updated Home.tsx - Remove the title since it's now in the Header component
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchGames, Game, FilterOptions } from '../services/api';
@@ -5,7 +6,6 @@ import SearchBar from '../components/SearchBar';
 import GameList from '../components/GameList';
 import Filters from '../components/Filters';
 import Favorites from '../components/Favorites';
-// import ApiTest from '../components/ApiTest';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -110,14 +110,7 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">
-                    <span className="text-purple-500">Game</span>Muse
-                </h1>
-                <p className="text-gray-400">Where your next favorite game, finds you!</p>
-            </div>
-            
+        <div>
             {/* Error banner */}
             {error && (
                 <div className="bg-red-900 text-red-200 p-4 rounded-lg shadow-lg mb-6">
@@ -136,7 +129,7 @@ const Home: React.FC = () => {
                     )}
                 </div>
             )}
-            {/* <ApiTest /> */}
+            
             <SearchBar onSearch={handleSearch} />
             
             <div className="mt-8">
