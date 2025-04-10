@@ -1,18 +1,18 @@
-    import { useState, useEffect } from 'react';
-    import { searchGames } from '../services/api';
-    import SearchBar from '../components/SearchBar';
-    import GameList from '../components/GameList';
-    import Filters from '../components/Filters';
-    import Favorites from '../components/Favorites';
-    import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { searchGames, Game, FilterOptions } from '../services/api';
+import SearchBar from '../components/SearchBar';
+import GameList from '../components/GameList';
+import Filters from '../components/Filters';
+import Favorites from '../components/Favorites';
 
-    const Home = () => {
+const Home: React.FC = () => {
     const navigate = useNavigate();
-    const [games, setGames] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filters, setFilters] = useState({});
-    const [noResults, setNoResults] = useState(false);
+    const [games, setGames] = useState<Game[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [filters, setFilters] = useState<FilterOptions>({});
+    const [noResults, setNoResults] = useState<boolean>(false);
 
     // Popular games to show on initial load
     useEffect(() => {
@@ -35,7 +35,7 @@
         fetchPopularGames();
     }, []);
 
-    const handleSearch = async (query) => {
+    const handleSearch = async (query: string) => {
         try {
         setSearchQuery(query);
         setLoading(true);
@@ -49,31 +49,12 @@
         }
     };
 
-    const handleFilterChange = async (newFilters) => {
+    const handleFilterChange = async (newFilters: FilterOptions) => {
         try {
         setFilters(newFilters);
         setLoading(true);
         
-        // Prepare API params
-        const apiParams = {};
-        
-        if (newFilters.genres?.length > 0) {
-            apiParams.genres = newFilters.genres.join(',');
-        }
-        
-        if (newFilters.platforms?.length > 0) {
-            apiParams.platforms = newFilters.platforms.join(',');
-        }
-        
-        if (newFilters.ordering) {
-            apiParams.ordering = newFilters.ordering;
-        }
-        
-        if (newFilters.dates) {
-            apiParams.dates = newFilters.dates;
-        }
-        
-        const data = await searchGames(searchQuery, apiParams);
+        const data = await searchGames(searchQuery, newFilters);
         setGames(data.results || []);
         setNoResults(data.results?.length === 0);
         } catch (error) {
@@ -81,8 +62,9 @@
         } finally {
         setLoading(false);
         }
+    };
 
-    const handleGameSelect = (gameId) => {
+    const handleGameSelect = (gameId: number) => {
         navigate(`/game/${gameId}`);
     };
 
@@ -128,7 +110,6 @@
         </div>
         </div>
     );
-    };
 };
 
 export default Home;
