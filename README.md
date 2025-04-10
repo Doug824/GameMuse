@@ -14,6 +14,7 @@ GameKindle is a React-based web application that helps users discover new video 
 ## Tech Stack
 
 - React (with Vite)
+- TypeScript for type safety
 - React Router for navigation
 - Tailwind CSS for styling
 - Axios for API calls
@@ -43,7 +44,16 @@ GameKindle is a React-based web application that helps users discover new video 
 Make sure to install these dependencies:
 
 ```
-npm install react-router-dom axios @tailwindcss/typography
+npm install axios react-router-dom
+npm install -D @tailwindcss/typography typescript
+```
+
+## Type Checking
+
+Run the TypeScript compiler to check for type errors:
+
+```
+npm run lint
 ```
 
 ## Build for Production
@@ -52,6 +62,11 @@ npm install react-router-dom axios @tailwindcss/typography
 npm run build
 ```
 
-## License
+## Adding Types for New Features
 
-MIT
+When extending the application with new features:
+
+1. Create appropriate interfaces for your data models
+2. Add type annotations to functions and components
+3. Use React.FC for functional components
+4. Utilize TypeScript generics when working with APIs and context

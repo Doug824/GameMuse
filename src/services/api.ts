@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { InternalAxiosRequestConfig } from 'axios';
 
 // Define types for API responses
 export interface Game {
@@ -75,13 +75,13 @@ const api = axios.create({
 });
 
 // Add the API key to every request
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     if (!config.params) {
         config.params = {};
     }
     config.params.key = import.meta.env.VITE_RAWG_API_KEY;
     return config;
-});
+    });
 
 // API functions
 export const searchGames = async (query: string, filters: FilterOptions = {}): Promise<APIResponse<Game>> => {
