@@ -181,11 +181,17 @@ const GameDetails: React.FC = () => {
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left column with image gallery */}
                 <div className="w-full lg:w-2/3">
-                    <div className="relative rounded-lg overflow-hidden bg-gray-800 shadow-lg">
+                    <div className="relative rounded-lg overflow-hidden bg-gray-800 shadow-lg h-96">
                         <img 
                             src={screenshots[activeImage]?.image || game.background_image || 'https://via.placeholder.com/1200x675?text=No+Image'} 
                             alt={`${game.name} screenshot`}
-                            className="w-full h-96 object-cover"
+                            className="w-full h-full object-contain" // Changed from object-cover to object-contain
+                            onError={(e) => {
+                                // Fallback if image fails to load
+                                const target = e.target as HTMLImageElement;
+                                target.src = game.background_image || 'https://via.placeholder.com/1200x675?text=No+Image';
+                                console.log('Screenshot image failed to load, using fallback');
+                            }}
                         />
                         
                         {/* Navigation arrows for screenshots if there are multiple */}
@@ -194,6 +200,7 @@ const GameDetails: React.FC = () => {
                                 <button 
                                     onClick={() => setActiveImage((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1))}
                                     className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
+                                    aria-label="Previous screenshot"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -202,6 +209,7 @@ const GameDetails: React.FC = () => {
                                 <button 
                                     onClick={() => setActiveImage((prev) => (prev === screenshots.length - 1 ? 0 : prev + 1))}
                                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
+                                    aria-label="Next screenshot"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
