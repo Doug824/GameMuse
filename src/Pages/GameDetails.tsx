@@ -92,6 +92,8 @@ const GameDetails: React.FC = () => {
 
         if (id) {
             fetchGameData();
+            // Scroll to top when navigating to a new game
+            window.scrollTo(0, 0);
         }
     }, [id]);
 
@@ -112,11 +114,11 @@ const GameDetails: React.FC = () => {
     if (loading) {
         return (
             <div className="container mx-auto px-4 py-8 animate-pulse">
-                <div className="h-8 w-64 bg-gray-700 rounded mb-4"></div>
-                <div className="h-96 w-full bg-gray-700 rounded mb-8"></div>
-                <div className="h-6 w-full bg-gray-700 rounded mb-2"></div>
-                <div className="h-6 w-full bg-gray-700 rounded mb-2"></div>
-                <div className="h-6 w-3/4 bg-gray-700 rounded"></div>
+                <div className="h-8 w-64 bg-fog/50 rounded mb-4"></div>
+                <div className="h-96 w-full bg-fog/40 rounded mb-8"></div>
+                <div className="h-6 w-full bg-fog/30 rounded mb-2"></div>
+                <div className="h-6 w-full bg-fog/30 rounded mb-2"></div>
+                <div className="h-6 w-3/4 bg-fog/30 rounded"></div>
             </div>
         );
     }
@@ -124,12 +126,12 @@ const GameDetails: React.FC = () => {
     if (error) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
-                <div className="bg-red-900 text-red-200 p-4 rounded-lg shadow-lg">
+                <div className="bg-red-900/80 backdrop-blur-sm text-red-200 p-6 rounded-lg shadow-lg border border-red-700/50">
                     <h2 className="text-xl font-semibold mb-2">Error</h2>
                     <p>{error}</p>
                     <button 
                         onClick={() => navigate('/')}
-                        className="mt-4 bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded transition"
+                        className="mt-4 bg-red-700/80 hover:bg-red-600/80 text-white px-4 py-2 rounded transition-colors duration-300 shadow-md"
                     >
                         Back to Home
                     </button>
@@ -155,24 +157,24 @@ const GameDetails: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
                 <button 
-                onClick={() => navigate(-1)}
-                className="flex items-center text-gray-400 hover:text-white mb-6 transition"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                </svg>
-                Back
-            </button>
+                    onClick={() => navigate(-1)}
+                    className="flex items-center text-tan hover:text-gold transition-colors duration-300"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                    </svg>
+                    Back
+                </button>
                 
                 <Link to="/" className="flex items-center text-xl font-bold transition hover:opacity-80">
-                    <span className="text-purple-500">Game</span>
-                    <span className="text-white">Muse</span>
+                    <span className="text-gold">Game</span>
+                    <span className="text-moonlight">Muse</span>
                 </Link>
-                </div>
+            </div>
 
             {/* Show partial fetch errors as warnings */}
             {Object.keys(fetchErrors).length > 0 && (
-                <div className="bg-yellow-900 text-yellow-200 p-3 rounded-lg shadow-lg mb-6 text-sm">
+                <div className="bg-yellow-900/60 backdrop-blur-sm text-yellow-200 p-3 rounded-lg shadow-lg mb-6 text-sm border border-yellow-700/50">
                     <h3 className="font-semibold mb-1">Some content could not be loaded:</h3>
                     <ul className="list-disc list-inside">
                         {Object.values(fetchErrors).map((errorMsg, index) => (
@@ -185,11 +187,11 @@ const GameDetails: React.FC = () => {
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left column with image gallery */}
                 <div className="w-full lg:w-2/3">
-                    <div className="relative rounded-lg overflow-hidden bg-gray-800 shadow-lg h-96">
+                    <div className="relative rounded-lg overflow-hidden bg-fog/30 shadow-lg h-96 backdrop-blur-sm border border-forest/50 magical-border">
                         <img 
                             src={screenshots[activeImage]?.image || game.background_image || 'https://via.placeholder.com/1200x675?text=No+Image'} 
                             alt={`${game.name} screenshot`}
-                            className="w-full h-full object-contain" // Changed from object-cover to object-contain
+                            className="w-full h-full object-contain" 
                             onError={(e) => {
                                 // Fallback if image fails to load
                                 const target = e.target as HTMLImageElement;
@@ -203,7 +205,7 @@ const GameDetails: React.FC = () => {
                             <>
                                 <button 
                                     onClick={() => setActiveImage((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1))}
-                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
+                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-twilight/70 backdrop-blur-sm rounded-full p-2 text-tan hover:text-gold hover:bg-twilight/90 transition-all duration-300"
                                     aria-label="Previous screenshot"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,7 +214,7 @@ const GameDetails: React.FC = () => {
                                 </button>
                                 <button 
                                     onClick={() => setActiveImage((prev) => (prev === screenshots.length - 1 ? 0 : prev + 1))}
-                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-twilight/70 backdrop-blur-sm rounded-full p-2 text-tan hover:text-gold hover:bg-twilight/90 transition-all duration-300"
                                     aria-label="Next screenshot"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -231,7 +233,7 @@ const GameDetails: React.FC = () => {
                                     key={screenshot.id}
                                     src={screenshot.image}
                                     alt={`${game.name} thumbnail ${index + 1}`}
-                                    className={`h-20 w-36 object-cover rounded cursor-pointer transition ${activeImage === index ? 'ring-2 ring-purple-500' : 'opacity-70 hover:opacity-100'}`}
+                                    className={`h-20 w-36 object-cover rounded cursor-pointer transition-all duration-300 border-2 ${activeImage === index ? 'border-gold shadow-md shadow-gold/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                     onClick={() => setActiveImage(index)}
                                 />
                             ))}
@@ -240,14 +242,16 @@ const GameDetails: React.FC = () => {
                 </div>
 
                 {/* Right column with game info */}
-                <div className="w-full lg:w-1/3 bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div className="w-full lg:w-1/3 bg-fog/30 backdrop-blur-sm p-6 rounded-lg shadow-lg border border-forest/50">
                     <div className="flex justify-between items-start mb-4">
-                        <h1 className="text-3xl font-bold text-white">{game.name}</h1>
+                        <h1 className="text-3xl font-bold text-mist glow-text">{game.name}</h1>
                         <button
                             onClick={handleFavoriteToggle}
-                            className={`p-2 rounded-full ${
-                                isFavorite(game.id) ? 'bg-red-500 text-white' : 'bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600'
-                            } transition`}
+                            className={`p-2 rounded-full transition-all duration-300 ${
+                                isFavorite(game.id) 
+                                ? 'bg-red-500/80 text-white shadow-md shadow-red-500/20' 
+                                : 'bg-fog/70 text-tan hover:text-gold hover:bg-fog/90'
+                            }`}
                         >
                             <svg 
                                 xmlns="http://www.w3.org/2000/svg" 
@@ -269,9 +273,9 @@ const GameDetails: React.FC = () => {
                     {game.metacritic && (
                         <div className="mb-4">
                             <span className={`px-3 py-1 text-sm rounded font-bold ${
-                                game.metacritic >= 75 ? 'bg-green-800 text-green-200' :
-                                game.metacritic >= 50 ? 'bg-yellow-700 text-yellow-100' :
-                                'bg-red-800 text-red-200'
+                                game.metacritic >= 75 ? 'bg-emerald-900/70 text-emerald-200' :
+                                game.metacritic >= 50 ? 'bg-gold/70 text-twilight' :
+                                'bg-red-800/70 text-red-200'
                             }`}>
                                 Metacritic: {game.metacritic}
                             </span>
@@ -279,18 +283,18 @@ const GameDetails: React.FC = () => {
                     )}
 
                     <div className="mb-4">
-                        <h2 className="text-gray-400 text-sm mb-1">Released</h2>
-                        <p className="text-white">{releaseDate}</p>
+                        <h2 className="text-tan text-sm mb-1">Released</h2>
+                        <p className="text-mist">{releaseDate}</p>
                     </div>
 
                     {game.genres && game.genres.length > 0 && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Genres</h2>
+                            <h2 className="text-tan text-sm mb-1">Genres</h2>
                             <div className="flex flex-wrap gap-2">
                                 {game.genres.map((genre) => (
                                     <span 
                                         key={genre.id} 
-                                        className="px-2 py-1 bg-gray-700 rounded text-gray-300 text-sm"
+                                        className="px-2 py-1 bg-sage/30 border border-sage/40 rounded text-tan text-sm"
                                     >
                                         {genre.name}
                                     </span>
@@ -301,12 +305,12 @@ const GameDetails: React.FC = () => {
 
                     {game.platforms && game.platforms.length > 0 && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Platforms</h2>
+                            <h2 className="text-tan text-sm mb-1">Platforms</h2>
                             <div className="flex flex-wrap gap-2">
                                 {game.platforms.map((platform) => (
                                     <span 
                                         key={platform.platform.id} 
-                                        className="px-2 py-1 bg-gray-700 rounded text-gray-300 text-sm"
+                                        className="px-2 py-1 bg-fog/50 border border-forest/70 rounded text-tan text-sm"
                                     >
                                         {platform.platform.name}
                                     </span>
@@ -317,33 +321,33 @@ const GameDetails: React.FC = () => {
 
                     {game.developers && game.developers.length > 0 && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Developers</h2>
-                            <p className="text-white">{game.developers.map(dev => dev.name).join(', ')}</p>
+                            <h2 className="text-tan text-sm mb-1">Developers</h2>
+                            <p className="text-mist">{game.developers.map(dev => dev.name).join(', ')}</p>
                         </div>
                     )}
 
                     {game.publishers && game.publishers.length > 0 && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Publishers</h2>
-                            <p className="text-white">{game.publishers.map(pub => pub.name).join(', ')}</p>
+                            <h2 className="text-tan text-sm mb-1">Publishers</h2>
+                            <p className="text-mist">{game.publishers.map(pub => pub.name).join(', ')}</p>
                         </div>
                     )}
 
                     {game.esrb_rating && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Age Rating</h2>
-                            <p className="text-white">{game.esrb_rating.name}</p>
+                            <h2 className="text-tan text-sm mb-1">Age Rating</h2>
+                            <p className="text-mist">{game.esrb_rating.name}</p>
                         </div>
                     )}
 
                     {game.website && (
                         <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Website</h2>
+                            <h2 className="text-tan text-sm mb-1">Website</h2>
                             <a 
                                 href={game.website} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
-                                className="text-purple-400 hover:text-purple-300 transition"
+                                className="text-gold hover:text-ethereal transition-colors duration-300"
                             >
                                 {game.website}
                             </a>
@@ -354,42 +358,40 @@ const GameDetails: React.FC = () => {
 
             {/* Game description */}
             {game.description && (
-                <div className="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
-                    <h2 className="text-xl font-semibold text-white mb-4">About</h2>
+                <div className="mt-8 bg-fog/30 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-forest/50">
+                    <h2 className="text-xl font-semibold text-mist mb-4 glow-text">About</h2>
                     <div 
-                        className="text-gray-300 prose prose-invert max-w-none"
+                        className="text-tan prose prose-invert max-w-none"
                         dangerouslySetInnerHTML={{ __html: game.description }}
                     />
                 </div>
             )}
 
             {/* Developer games section */}
-            {game.developers && game.developers.length > 0 && (
+            {game.developers && game.developers.length > 0 && developerGames.length > 0 && (
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">
+                    <h2 className="text-xl font-semibold text-mist mb-4 glow-text">
                         More Games by {game.developers[0].name}
                     </h2>
                     
                     {loadingDeveloperGames ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
                             {[...Array(4)].map((_, index) => (
-                                <div key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                                    <div className="w-full h-48 bg-gray-700"></div>
+                                <div key={index} className="bg-fog/30 rounded-lg overflow-hidden shadow-lg">
+                                    <div className="w-full h-48 bg-fog/20"></div>
                                     <div className="p-4">
-                                        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-                                        <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+                                        <div className="h-6 bg-fog/40 rounded w-3/4 mb-2"></div>
+                                        <div className="h-4 bg-fog/40 rounded w-1/2"></div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    ) : developerGames.length > 0 ? (
+                    ) : (
                         <GameList 
                             games={developerGames} 
                             onGameSelect={handleSimilarGameSelect} 
                             loading={false} 
                         />
-                    ) : (
-                        <p className="text-gray-400">No other games from this developer found.</p>
                     )}
                 </div>
             )}
@@ -397,7 +399,7 @@ const GameDetails: React.FC = () => {
             {/* Similar games section */}
             {similarGames.length > 0 && (
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Similar Games</h2>
+                    <h2 className="text-xl font-semibold text-mist mb-4 glow-text">Similar Games</h2>
                     <GameList 
                         games={similarGames} 
                         onGameSelect={handleSimilarGameSelect} 
