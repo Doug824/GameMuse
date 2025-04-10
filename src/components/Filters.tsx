@@ -1,13 +1,24 @@
-import { useState, useEffect } from 'react';
-import { getGenres, getPlatforms } from '../services/api';
+import React, { useState, useEffect } from 'react';
+import { getGenres, getPlatforms, Genre, Platform, FilterOptions } from '../services/api';
 
-const Filters = ({ onFilterChange }) => {
-    const [showFilters, setShowFilters] = useState(false);
-    const [genres, setGenres] = useState([]);
-    const [platforms, setPlatforms] = useState([]);
-    const [loading, setLoading] = useState(true);
+interface FiltersProps {
+    onFilterChange: (filters: FilterOptions) => void;
+}
+
+interface FilterState {
+    genres: string[];
+    platforms: string[];
+    ordering: string;
+    dates: string;
+}
+
+const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+    const [showFilters, setShowFilters] = useState<boolean>(false);
+    const [genres, setGenres] = useState<Genre[]>([]);
+    const [platforms, setPlatforms] = useState<Platform[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<FilterState>({
         genres: [],
         platforms: [],
         ordering: '',
@@ -34,9 +45,9 @@ const Filters = ({ onFilterChange }) => {
         fetchFilters();
     }, []);
 
-    const handleFilterChange = (type, value) => {
+    const handleFilterChange = (type: keyof FilterState, value: string) => {
         setFilters(prev => {
-        let newFilters;
+        let newFilters: FilterState;
         
         if (type === 'genres' || type === 'platforms') {
             // Toggle array values
@@ -55,7 +66,26 @@ const Filters = ({ onFilterChange }) => {
             newFilters = { ...prev, [type]: value };
         }
         
-        onFilterChange(newFilters);
+        // Convert filter state to API parameters
+        const apiParams: FilterOptions = {};
+        
+        if (newFilters.genres.length > 0) {
+            apiParams.genres = newFilters.genres.join(',');
+        }
+        
+        if (newFilters.platforms.length > 0) {
+            apiParams.platforms = newFilters.platforms.join(',');
+        }
+        
+        if (newFilters.ordering) {
+            apiParams.ordering = newFilters.ordering;
+        }
+        
+        if (newFilters.dates) {
+            apiParams.dates = newFilters.dates;
+        }
+        
+        onFilterChange(apiParams);
         return newFilters;
         });
     };
@@ -65,14 +95,14 @@ const Filters = ({ onFilterChange }) => {
     };
 
     const clearFilters = () => {
-        const resetFilters = {
+        const resetFilters: FilterState = {
         genres: [],
         platforms: [],
         ordering: '',
         dates: ''
         };
         setFilters(resetFilters);
-        onFilterChange(resetFilters);
+        onFilterChange({});
     };
 
     // Year ranges for filtering
