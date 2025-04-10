@@ -1,6 +1,6 @@
-# GameKindle
+# GameMuse
 
-GameKindle is a React-based web application that helps users discover new video games based on their interests. It uses the RAWG API to fetch game data and provides features like game search, filters, favorites, and detailed game information.
+GameMuse is a React-based web application that helps users discover new video games based on their interests. It uses the RAWG API to fetch game data and provides features like game search, filters, favorites, and detailed game information.
 
 ## Features
 

@@ -27,20 +27,20 @@ export const useFavorites = (): FavoritesContextType => {
 
     // Load favorites from localStorage on initial render
     useEffect(() => {
-        const storedFavorites = localStorage.getItem('gameKindleFavorites');
+        const storedFavorites = localStorage.getItem('gameMuseFavorites');
         if (storedFavorites) {
         try {
             setFavorites(JSON.parse(storedFavorites));
         } catch (error) {
             console.error('Error parsing favorites from localStorage:', error);
-            localStorage.removeItem('gameKindleFavorites');
+            localStorage.removeItem('gameMuseFavorites');
         }
         }
     }, []);
 
     // Save favorites to localStorage whenever they change
     useEffect(() => {
-        localStorage.setItem('gameKindleFavorites', JSON.stringify(favorites));
+        localStorage.setItem('gameMuseFavorites', JSON.stringify(favorites));
     }, [favorites]);
 
     // Add a game to favorites
