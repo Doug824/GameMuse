@@ -74,28 +74,69 @@ const api = axios.create({
     baseURL: 'https://api.rawg.io/api',
 });
 
-// Add the API key to every request
+// Add the API key to every request with better error handling
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     if (!config.params) {
         config.params = {};
     }
-    config.params.key = import.meta.env.VITE_RAWG_API_KEY;
+    
+    // Check if API key exists and log appropriately
+    const apiKey = import.meta.env.VITE_RAWG_API_KEY;
+    
+    if (!apiKey) {
+        console.error('⚠️ API KEY IS MISSING! Please check your .env file');
+        console.log('Make sure you have a .env file in your project root with:');
+        console.log('VITE_RAWG_API_KEY=your_api_key_here');
+        
+        // Attempt the request, but it will likely fail
+        // Debugging by showing the exact request that's failing
+    }
+    
+    config.params.key = apiKey;
+    
+    // Debug log the request
+    if (import.meta.env.DEV) {
+        console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, 
+            config.params ? `with params: ${JSON.stringify(config.params)}` : '');
+    }
+    
     return config;
-    });
+});
 
-// API functions
+// API functions with improved error handling
 export const searchGames = async (query: string, filters: FilterOptions = {}): Promise<APIResponse<Game>> => {
     try {
+        console.log(`Searching for games with query: "${query}"`);
+        
         const { data } = await api.get<APIResponse<Game>>('/games', {
-        params: {
-            search: query,
-            page_size: 20,
-            ...filters,
-        },
+            params: {
+                search: query,
+                page_size: 20,
+                ...filters,
+            },
         });
+        
+        console.log(`Found ${data.results.length} games matching "${query}"`);
         return data;
     } catch (error) {
         console.error('Error searching games:', error);
+        
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error(`API Error: ${error.response.status}`, error.response.data);
+                
+                if (error.response.status === 401) {
+                    console.error('API KEY INVALID: Please check your RAWG API key');
+                }
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('No response received from API:', error.request);
+            }
+        }
+        
+        // Re-throw the error so components can handle it
         throw error;
     }
 };
@@ -105,7 +146,7 @@ export const getGameDetails = async (gameId: number | string): Promise<Game> => 
         const { data } = await api.get<Game>(`/games/${gameId}`);
         return data;
     } catch (error) {
-        console.error('Error fetching game details:', error);
+        console.error(`Error fetching details for game ID ${gameId}:`, error);
         throw error;
     }
 };
@@ -115,7 +156,7 @@ export const getGameScreenshots = async (gameId: number | string): Promise<APIRe
         const { data } = await api.get<APIResponse<Screenshot>>(`/games/${gameId}/screenshots`);
         return data;
     } catch (error) {
-        console.error('Error fetching game screenshots:', error);
+        console.error(`Error fetching screenshots for game ID ${gameId}:`, error);
         throw error;
     }
 };
@@ -125,7 +166,7 @@ export const getSimilarGames = async (gameId: number | string): Promise<APIRespo
         const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/suggested`);
         return data;
     } catch (error) {
-        console.error('Error fetching similar games:', error);
+        console.error(`Error fetching similar games for game ID ${gameId}:`, error);
         throw error;
     }
 };
