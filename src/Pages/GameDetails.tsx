@@ -1,20 +1,24 @@
-    import { useState, useEffect } from 'react';
-    import { useParams, useNavigate } from 'react-router-dom';
-    import { getGameDetails, getGameScreenshots, getSimilarGames } from '../services/api';
-    import { useFavorites } from '../context/FavoritesContext';
-    import GameList from '../components/GameList';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getGameDetails, getGameScreenshots, getSimilarGames, Game, Screenshot } from '../services/api';
+import { useFavorites } from '../context/FavoritesContext';
+import GameList from '../components/GameList';
 
-const GameDetails = () => {
-    const { id } = useParams();
+interface GameDetailsParams {
+    id: string;
+}
+
+const GameDetails: React.FC = () => {
+    const { id } = useParams<keyof GameDetailsParams>() as GameDetailsParams;
     const navigate = useNavigate();
     const { isFavorite, addFavorite, removeFavorite } = useFavorites();
     
-    const [game, setGame] = useState(null);
-    const [screenshots, setScreenshots] = useState([]);
-    const [similarGames, setSimilarGames] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [activeImage, setActiveImage] = useState(0);
-    const [error, setError] = useState(null);
+    const [game, setGame] = useState<Game | null>(null);
+    const [screenshots, setScreenshots] = useState<Screenshot[]>([]);
+    const [similarGames, setSimilarGames] = useState<Game[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [activeImage, setActiveImage] = useState<number>(0);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchGameData = async () => {
@@ -46,14 +50,16 @@ const GameDetails = () => {
     }, [id]);
 
     const handleFavoriteToggle = () => {
+        if (game) {
         if (isFavorite(game.id)) {
-        removeFavorite(game.id);
+            removeFavorite(game.id);
         } else {
-        addFavorite(game);
+            addFavorite(game);
+        }
         }
     };
 
-    const handleSimilarGameSelect = (gameId) => {
+    const handleSimilarGameSelect = (gameId: number) => {
         navigate(`/game/${gameId}`);
     };
 
