@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getGameDetails, getGameScreenshots, getSimilarGames, Game, Screenshot } from '../services/api';
+import { getGameDetails, getGameScreenshots, getSimilarGames, getGamesByDeveloper, Game, Screenshot } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import GameList from '../components/GameList';
 
@@ -20,6 +20,8 @@ const GameDetails: React.FC = () => {
     const [activeImage, setActiveImage] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [fetchErrors, setFetchErrors] = useState<{[key: string]: string}>({});
+    const [developerGames, setDeveloperGames] = useState<Game[]>([]);
+    const [loadingDeveloperGames, setLoadingDeveloperGames] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchGameData = async () => {
@@ -28,61 +30,56 @@ const GameDetails: React.FC = () => {
                 setError(null);
                 setFetchErrors({});
                 
-                // Check if API key exists
-                const apiKey = import.meta.env.VITE_RAWG_API_KEY;
-                if (!apiKey) {
-                    setError('API key is missing. Please configure your .env file with a valid RAWG API key.');
-                    setLoading(false);
-                    return;
-                }
-                
                 console.log(`Fetching details for game ID: ${id}`);
                 
-                // Fetch each data piece separately to better identify which request fails
+                // Fetch game details first
                 let gameData: Game | null = null;
-                let screenshotsData: Screenshot[] = [];
-                let similarGamesData: Game[] = [];
-                
-                const errors: {[key: string]: string} = {};
                 
                 try {
                     gameData = await getGameDetails(id);
                     console.log('Game details fetched successfully');
+                    setGame(gameData);
+                    
+                    // Now fetch other data in parallel if we have game details
+                    const [screenshotsResponse, similarGamesResponse] = await Promise.all([
+                        getGameScreenshots(id).catch(error => {
+                            console.error('Error fetching screenshots:', error);
+                            setFetchErrors(prev => ({...prev, screenshots: 'Could not load screenshots'}));
+                            return { results: [] };
+                        }),
+                        getSimilarGames(id).catch(error => {
+                            console.error('Error fetching similar games:', error);
+                            setFetchErrors(prev => ({...prev, similar: 'Could not load similar games'}));
+                            return { results: [] };
+                        })
+                    ]);
+                    
+                    setScreenshots(screenshotsResponse.results || []);
+                    setSimilarGames(similarGamesResponse.results || []);
+                    
+                    // Fetch games by the same developer if we have developer info
+                    if (gameData.developers && gameData.developers.length > 0) {
+                        setLoadingDeveloperGames(true);
+                        try {
+                            const primaryDeveloperId = gameData.developers[0].id;
+                            const devGamesResponse = await getGamesByDeveloper(primaryDeveloperId);
+                            
+                            // Filter out the current game from developer games
+                            const filteredDevGames = devGamesResponse.results.filter(
+                                game => game.id !== Number(id)
+                            );
+                            
+                            setDeveloperGames(filteredDevGames);
+                        } catch (error) {
+                            console.error('Error fetching developer games:', error);
+                            setFetchErrors(prev => ({...prev, developer: 'Could not load developer games'}));
+                        } finally {
+                            setLoadingDeveloperGames(false);
+                        }
+                    }
+                    
                 } catch (error) {
                     console.error('Error fetching game details:', error);
-                    errors.details = 'Could not load game details';
-                }
-                
-                try {
-                    const screenshotsResponse = await getGameScreenshots(id);
-                    screenshotsData = screenshotsResponse.results || [];
-                    console.log(`Fetched ${screenshotsData.length} screenshots`);
-                } catch (error) {
-                    console.error('Error fetching screenshots:', error);
-                    errors.screenshots = 'Could not load screenshots';
-                }
-                
-                try {
-                    const similarGamesResponse = await getSimilarGames(id);
-                    similarGamesData = similarGamesResponse.results || [];
-                    console.log(`Fetched ${similarGamesData.length} similar games`);
-                } catch (error) {
-                    console.error('Error fetching similar games:', error);
-                    errors.similar = 'Could not load similar games';
-                }
-                
-                // Update state with whatever data we successfully fetched
-                if (gameData) {
-                    setGame(gameData);
-                    setScreenshots(screenshotsData);
-                    setSimilarGames(similarGamesData);
-                    
-                    // Store any partial errors
-                    if (Object.keys(errors).length > 0) {
-                        setFetchErrors(errors);
-                    }
-                } else {
-                    // If we couldn't fetch the main game data, that's a critical error
                     setError('Failed to load game details. Please try again later.');
                 }
             } catch (error) {
@@ -363,6 +360,37 @@ const GameDetails: React.FC = () => {
                         className="text-gray-300 prose prose-invert max-w-none"
                         dangerouslySetInnerHTML={{ __html: game.description }}
                     />
+                </div>
+            )}
+
+            {/* Developer games section */}
+            {game.developers && game.developers.length > 0 && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-semibold text-white mb-4">
+                        More Games by {game.developers[0].name}
+                    </h2>
+                    
+                    {loadingDeveloperGames ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
+                            {[...Array(4)].map((_, index) => (
+                                <div key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                                    <div className="w-full h-48 bg-gray-700"></div>
+                                    <div className="p-4">
+                                        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+                                        <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : developerGames.length > 0 ? (
+                        <GameList 
+                            games={developerGames} 
+                            onGameSelect={handleSimilarGameSelect} 
+                            loading={false} 
+                        />
+                    ) : (
+                        <p className="text-gray-400">No other games from this developer found.</p>
+                    )}
                 </div>
             )}
 
