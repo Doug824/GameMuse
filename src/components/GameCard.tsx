@@ -1,10 +1,17 @@
+import React from 'react';
 import { useFavorites } from '../context/FavoritesContext';
+import { Game } from '../services/api';
 
-const GameCard = ({ game, onClick }) => {
+interface GameCardProps {
+    game: Game;
+    onClick: (gameId: number) => void;
+}
+
+const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
     const { isFavorite, addFavorite, removeFavorite } = useFavorites();
     const isGameFavorite = isFavorite(game.id);
 
-    const handleFavoriteClick = (e) => {
+    const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation(); // Prevent triggering the card click event
         if (isGameFavorite) {
         removeFavorite(game.id);
