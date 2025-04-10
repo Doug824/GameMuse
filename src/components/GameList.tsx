@@ -1,6 +1,14 @@
+import React from 'react';
 import GameCard from './GameCard';
+import { Game } from '../services/api';
 
-const GameList = ({ games, onGameSelect, loading }) => {
+interface GameListProps {
+    games: Game[];
+    onGameSelect: (gameId: number) => void;
+    loading: boolean;
+}
+
+const GameList: React.FC<GameListProps> = ({ games, onGameSelect, loading }) => {
     if (loading) {
         return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
