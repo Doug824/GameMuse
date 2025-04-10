@@ -163,9 +163,60 @@ export const getGameScreenshots = async (gameId: number | string): Promise<APIRe
 
 export const getSimilarGames = async (gameId: number | string): Promise<APIResponse<Game>> => {
     try {
-        const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/suggested`);
-        return data;
+        // First try the 'suggested' endpoint which is more specific but might not be available for all games
+        try {
+            const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/suggested`);
+            if (data && data.results && data.results.length > 0) {
+                console.log(`Found ${data.results.length} suggested games`);
+                return data;
+            }
+            throw new Error('No suggested games found');
+        } catch {
+            console.log('Suggested games endpoint failed, trying games-series endpoint');
+            
+            // If suggested games fails, try the game-series endpoint
+            try {
+                const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/game-series`);
+                if (data && data.results && data.results.length > 0) {
+                    console.log(`Found ${data.results.length} game series`);
+                    return data;
+                }
+                throw new Error('No game series found');
+            } catch {
+                console.log('Game series endpoint also failed, falling back to genre-based recommendation');
+                
+                // If both fail, get the game details to extract genre and then find similar games by genre
+                try {
+                    const gameDetails = await getGameDetails(gameId);
+                    
+                    if (gameDetails && gameDetails.genres && gameDetails.genres.length > 0) {
+                        const primaryGenre = gameDetails.genres[0].id;
+                        const { data } = await api.get<APIResponse<Game>>('/games', {
+                            params: {
+                                genres: primaryGenre,
+                                exclude_additions: true,
+                                page_size: 6
+                            }
+                        });
+                        
+                        // Filter out the current game if it's in the results
+                        data.results = data.results.filter(game => game.id !== Number(gameId));
+                        
+                        if (data.results.length > 0) {
+                            console.log(`Found ${data.results.length} genre-based similar games`);
+                            return data;
+                        }
+                    }
+                } catch {
+                    console.log('All fallback methods failed');
+                }
+                
+                // If all methods fail, return an empty response
+                return { count: 0, results: [], next: null, previous: null };
+            }
+        }
     } catch (error) {
+        // We keep the error parameter only in the outermost catch because we actually use it
         console.error(`Error fetching similar games for game ID ${gameId}:`, error);
         throw error;
     }
