@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useFavorites } from '../context/FavoritesContext';
 import GameCard from './GameCard';
 
-const Favorites = ({ onGameSelect }) => {
+interface FavoritesProps {
+onGameSelect: (gameId: number) => void;
+}
+
+const Favorites: React.FC<FavoritesProps> = ({ onGameSelect }) => {
     const { favorites } = useFavorites();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const toggleOpen = () => {
         setIsOpen(!isOpen);
     };
 
     return (
-        <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+    <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
         <button
             onClick={toggleOpen}
             className="w-full flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 transition"
@@ -76,7 +80,7 @@ const Favorites = ({ onGameSelect }) => {
             )}
             </div>
         )}
-        </div>
+    </div>
     );
 };
 
