@@ -169,7 +169,7 @@ const GameDetails: React.FC = () => {
                 
                 <Link to="/" className="flex items-center text-xl font-bold transition hover:opacity-80">
                     <span className="text-purple-500">Game</span>
-                    <span className="text-white">Kindle</span>
+                    <span className="text-white">Muse</span>
                 </Link>
                 </div>
 

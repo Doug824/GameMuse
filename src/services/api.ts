@@ -337,10 +337,10 @@ export const getSimilarGames = async (gameId: number | string): Promise<APIRespo
         // Sort by similarity score (highest first)
         scoredCandidates.sort((a, b) => b.score - a.score);
         
-        // Take top results (max 6)
+        // Take top results (max 8)
         const topResults = scoredCandidates
             .filter(item => item.score > 30) // Only include games with meaningful similarity
-            .slice(0, 6)
+            .slice(0, 8)
             .map(item => item.game);
             
         console.log(`Final similar games count: ${topResults.length}`);
@@ -399,6 +399,32 @@ export const getGenres = async (): Promise<APIResponse<Genre>> => {
     }
 };
 
+/**
+ * Fetches games made by a specific developer
+ * @param developerId The ID of the developer
+ * @returns A promise containing the API response with games
+ */
+export const getGamesByDeveloper = async (developerId: number): Promise<APIResponse<Game>> => {
+    try {
+        console.log(`Fetching games by developer ID: ${developerId}`);
+        
+        const { data } = await api.get<APIResponse<Game>>('/games', {
+            params: {
+            developers: developerId.toString(),
+            ordering: '-rating', // Sort by highest rated first
+            page_size: 6, // Limit to 6 games for display
+            exclude_additions: true // Exclude DLCs and add-ons
+            }
+        });
+        
+        console.log(`Found ${data.results.length} games by developer ${developerId}`);
+        return data;
+        } catch (error) {
+        console.error(`Error fetching games by developer ID ${developerId}:`, error);
+        throw error;
+        }
+    };
+    
 export const getPlatforms = async (): Promise<APIResponse<Platform>> => {
     try {
         const { data } = await api.get<APIResponse<Platform>>('/platforms');
