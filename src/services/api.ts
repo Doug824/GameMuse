@@ -15,6 +15,7 @@ export interface Game {
     developers?: Developer[];
     publishers?: Publisher[];
     esrb_rating?: ESRBRating;
+    tags?: Tag[];
 }
 
 export interface Genre {
@@ -66,7 +67,18 @@ export interface FilterOptions {
     dates?: string;
     page_size?: number;
     page?: number;
+    tags?: string;               
+    metacritic?: string;         
+    exclude_additions?: string;  
+    exclude_parents?: string;    
+    exclude_game_series?: string;
     [key: string]: string | number | undefined;
+}
+
+export interface Tag {
+    id: number;
+    name: string;
+    slug: string;
 }
 
 // Create an axios instance with the base URL for RAWG API
@@ -163,60 +175,126 @@ export const getGameScreenshots = async (gameId: number | string): Promise<APIRe
 
 export const getSimilarGames = async (gameId: number | string): Promise<APIResponse<Game>> => {
     try {
-        // First try the 'suggested' endpoint which is more specific but might not be available for all games
+        // First try the 'suggested' endpoint - this is RAWG's built-in similarity algorithm
         try {
             const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/suggested`);
             if (data && data.results && data.results.length > 0) {
-                console.log(`Found ${data.results.length} suggested games`);
+                console.log(`Found ${data.results.length} suggested games from API`);
                 return data;
             }
-            throw new Error('No suggested games found');
         } catch {
-            console.log('Suggested games endpoint failed, trying games-series endpoint');
+            console.log('Suggested games endpoint failed');
+        }
+        
+        // If suggested games fails, try the game-series endpoint
+        try {
+            const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/game-series`);
+            if (data && data.results && data.results.length > 0) {
+                console.log(`Found ${data.results.length} games in the same series`);
+                return data;
+            }
+        } catch {
+            console.log('Game series endpoint failed');
+        }
+        
+        // If both quick methods fail, do a more sophisticated search based on the game's attributes
+        // Get the detailed game info first
+        const gameDetails = await getGameDetails(gameId);
+        
+        // Build a sophisticated search query based on multiple game attributes
+        const searchParams: FilterOptions = {
+            page_size: 10,
+            exclude_additions: "true",
+            exclude_parents: "false",
+            exclude_game_series: "false",
+        };
+        
+        // Use the game's genres for similarity matching
+        if (gameDetails.genres && gameDetails.genres.length > 0) {
+            // Use up to 2 genres for better specificity
+            const genreIds = gameDetails.genres.slice(0, 2).map(g => g.id);
+            searchParams.genres = genreIds.join(',');
+        }
+        
+        // Add platforms for more similarity
+        if (gameDetails.platforms && gameDetails.platforms.length > 0) {
+            const platformIds = gameDetails.platforms.slice(0, 3).map(p => p.platform.id);
+            searchParams.platforms = platformIds.join(',');
+        }
+        
+        // Consider the game's tags, if available
+        if (gameDetails.tags && gameDetails.tags.length > 0) {
+            const tagIds = gameDetails.tags.slice(0, 3).map(t => t.id);
+            searchParams.tags = tagIds.join(',');
+        }
+        
+        // Consider similar metacritic scores for quality matching
+        if (gameDetails.metacritic) {
+            // Find games with similar review scores (within 10 points)
+            const minScore = Math.max(0, gameDetails.metacritic - 10);
+            const maxScore = Math.min(100, gameDetails.metacritic + 10);
+            searchParams.metacritic = `${minScore},${maxScore}`;
+        }
+        
+        // Find games from a similar time period
+        if (gameDetails.released) {
+            const releaseDate = new Date(gameDetails.released);
+            const releaseYear = releaseDate.getFullYear();
             
-            // If suggested games fails, try the game-series endpoint
-            try {
-                const { data } = await api.get<APIResponse<Game>>(`/games/${gameId}/game-series`);
-                if (data && data.results && data.results.length > 0) {
-                    console.log(`Found ${data.results.length} game series`);
-                    return data;
+            // Find games within a 3-year window
+            const startYear = releaseYear - 1;
+            const endYear = releaseYear + 1;
+            searchParams.dates = `${startYear}-01-01,${endYear}-12-31`;
+        }
+        
+        // Execute the search with our carefully constructed parameters
+        const { data } = await api.get<APIResponse<Game>>('/games', { params: searchParams });
+        
+        // Filter out the original game from the results
+        let results = data.results.filter(game => game.id !== Number(gameId));
+        
+        // If we get too many results, prioritize games with the most attribute matches
+        if (results.length > 6) {
+            // Sort by most relevant (most attribute matches with the original game)
+            results = results.slice(0, 6);
+        }
+        
+        if (results.length > 0) {
+            console.log(`Found ${results.length} similar games based on game attributes`);
+            return {
+                count: results.length,
+                results,
+                next: null,
+                previous: null
+            };
+        }
+        
+        // Last resort fallback - just find popular games in the primary genre
+        if (gameDetails.genres && gameDetails.genres.length > 0) {
+            const primaryGenre = gameDetails.genres[0].id;
+            const { data } = await api.get<APIResponse<Game>>('/games', {
+                params: {
+                    genres: primaryGenre,
+                    ordering: '-rating',
+                    page_size: 6
                 }
-                throw new Error('No game series found');
-            } catch {
-                console.log('Game series endpoint also failed, falling back to genre-based recommendation');
-                
-                // If both fail, get the game details to extract genre and then find similar games by genre
-                try {
-                    const gameDetails = await getGameDetails(gameId);
-                    
-                    if (gameDetails && gameDetails.genres && gameDetails.genres.length > 0) {
-                        const primaryGenre = gameDetails.genres[0].id;
-                        const { data } = await api.get<APIResponse<Game>>('/games', {
-                            params: {
-                                genres: primaryGenre,
-                                exclude_additions: true,
-                                page_size: 6
-                            }
-                        });
-                        
-                        // Filter out the current game if it's in the results
-                        data.results = data.results.filter(game => game.id !== Number(gameId));
-                        
-                        if (data.results.length > 0) {
-                            console.log(`Found ${data.results.length} genre-based similar games`);
-                            return data;
-                        }
-                    }
-                } catch {
-                    console.log('All fallback methods failed');
-                }
-                
-                // If all methods fail, return an empty response
-                return { count: 0, results: [], next: null, previous: null };
+            });
+            
+            const genreResults = data.results.filter(game => game.id !== Number(gameId));
+            if (genreResults.length > 0) {
+                console.log(`Found ${genreResults.length} games in the same genre as last resort`);
+                return {
+                    count: genreResults.length,
+                    results: genreResults,
+                    next: null,
+                    previous: null
+                };
             }
         }
+        
+        // If all methods fail, return an empty response
+        return { count: 0, results: [], next: null, previous: null };
     } catch (error) {
-        // We keep the error parameter only in the outermost catch because we actually use it
         console.error(`Error fetching similar games for game ID ${gameId}:`, error);
         throw error;
     }
