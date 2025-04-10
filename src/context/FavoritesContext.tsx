@@ -1,11 +1,29 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { Game } from '../services/api';
 
-const FavoritesContext = createContext();
+interface FavoritesContextType {
+    favorites: Game[];
+    addFavorite: (game: Game) => void;
+    removeFavorite: (gameId: number) => void;
+    isFavorite: (gameId: number) => boolean;
+}
 
-export const useFavorites = () => useContext(FavoritesContext);
+interface FavoritesProviderProps {
+    children: ReactNode;
+}
 
-export const FavoritesProvider = ({ children }) => {
-    const [favorites, setFavorites] = useState([]);
+const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
+
+export const useFavorites = (): FavoritesContextType => {
+    const context = useContext(FavoritesContext);
+    if (context === undefined) {
+        throw new Error('useFavorites must be used within a FavoritesProvider');
+    }
+    return context;
+    };
+
+    export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
+    const [favorites, setFavorites] = useState<Game[]>([]);
 
     // Load favorites from localStorage on initial render
     useEffect(() => {
@@ -26,7 +44,7 @@ export const FavoritesProvider = ({ children }) => {
     }, [favorites]);
 
     // Add a game to favorites
-    const addFavorite = (game) => {
+    const addFavorite = (game: Game) => {
         setFavorites((prevFavorites) => {
         // Check if game is already in favorites to avoid duplicates
         const exists = prevFavorites.some((fav) => fav.id === game.id);
@@ -35,15 +53,15 @@ export const FavoritesProvider = ({ children }) => {
         });
     };
 
-  // Remove a game from favorites
-    const removeFavorite = (gameId) => {
+    // Remove a game from favorites
+    const removeFavorite = (gameId: number) => {
         setFavorites((prevFavorites) => 
         prevFavorites.filter((game) => game.id !== gameId)
         );
     };
 
     // Check if a game is in favorites
-    const isFavorite = (gameId) => {
+    const isFavorite = (gameId: number): boolean => {
         return favorites.some((game) => game.id === gameId);
     };
 
