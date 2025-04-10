@@ -72,7 +72,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-            <span className="text-purple-500">Game</span>Kindle
+            <span className="text-purple-500">Game</span>Muse
             </h1>
             <p className="text-gray-400">Discover your next favorite game</p>
         </div>
