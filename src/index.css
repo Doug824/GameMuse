@@ -17,6 +17,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: #111827; /* Dark fallback if image doesn't load */
 }
 
 /* Custom scrollbar styles */
@@ -36,4 +37,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.5);
+}
+
+/* Additional styling for text readability on forest background */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Ensuring image backgrounds aren't affected by opacity */
+.bg-opacity-90 img {
+  opacity: 1 !important;
+}
+
+/* Enhance backdrop blur for better readability */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
 }
