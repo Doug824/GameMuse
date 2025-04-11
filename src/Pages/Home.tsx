@@ -1,4 +1,3 @@
-// Updated Home.tsx - Remove the title since it's now in the Header component
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchGames, Game, FilterOptions } from '../services/api';
@@ -113,7 +112,7 @@ const Home: React.FC = () => {
         <div>
             {/* Error banner */}
             {error && (
-                <div className="bg-red-900 text-red-200 p-4 rounded-lg shadow-lg mb-6">
+                <div className="bg-red-900 bg-opacity-90 backdrop-blur-sm text-red-200 p-4 rounded-lg shadow-lg mb-6">
                     <h3 className="font-semibold mb-1">Error</h3>
                     <p>{error}</p>
                     {isApiKeyMissing && (
@@ -137,7 +136,7 @@ const Home: React.FC = () => {
                 
                 <Filters onFilterChange={handleFilterChange} />
                 
-                <div className="mb-4">
+                <div className="mb-4 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-3 rounded-lg">
                     <h2 className="text-xl font-semibold text-white">
                         {searchQuery 
                         ? `Results for "${searchQuery}"` 
@@ -155,7 +154,7 @@ const Home: React.FC = () => {
                 />
                 
                 {noResults && !loading && !error && (
-                    <div className="text-center py-12">
+                    <div className="text-center py-12 bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg">
                         <h3 className="text-xl font-semibold text-gray-400">No games found</h3>
                         <p className="text-gray-500 mt-2">Try a different search or adjust your filters</p>
                     </div>
