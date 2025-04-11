@@ -1,4 +1,4 @@
-// Updated Home.tsx with fantasy forest theme
+// Updated Home.tsx - Remove the title since it's now in the Header component
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchGames, Game, FilterOptions } from '../services/api';
@@ -110,66 +110,56 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="relative">
-            {/* Floating decorative elements - only visible on larger screens */}
-            <div className="hidden md:block">
-                <div className="absolute -top-16 -left-16 w-32 h-32 bg-gold/10 rounded-full blur-2xl z-0 floating-slow"></div>
-                <div className="absolute top-1/3 -right-20 w-40 h-40 bg-ethereal/10 rounded-full blur-2xl z-0 floating"></div>
-                <div className="absolute bottom-1/4 -left-12 w-24 h-24 bg-sage/10 rounded-full blur-2xl z-0 floating-fast"></div>
-            </div>
-            
-            {/* Main content */}
-            <div className="relative z-10">
-                {/* Error banner */}
-                {error && (
-                    <div className="bg-red-900/70 backdrop-blur-sm text-red-200 p-4 rounded-lg shadow-lg mb-6 border border-red-700/50">
-                        <h3 className="font-semibold mb-1">Error</h3>
-                        <p>{error}</p>
-                        {isApiKeyMissing && (
-                            <div className="mt-2 text-sm">
-                                <p className="font-semibold">How to fix:</p>
-                                <ol className="list-decimal list-inside ml-2 mt-1">
-                                    <li>Get a free API key from <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" className="underline text-gold hover:text-ethereal transition-colors duration-300">RAWG API</a></li>
-                                    <li>Create a <code className="bg-red-800/70 px-1 rounded">.env</code> file in your project root</li>
-                                    <li>Add <code className="bg-red-800/70 px-1 rounded">VITE_RAWG_API_KEY=your_api_key_here</code></li>
-                                    <li>Restart your development server</li>
-                                </ol>
-                            </div>
-                        )}
-                    </div>
-                )}
-                
-                <SearchBar onSearch={handleSearch} />
-                
-                <div className="mt-8">
-                    <Favorites onGameSelect={handleGameSelect} />
-                    
-                    <Filters onFilterChange={handleFilterChange} />
-                    
-                    <div className="mb-4">
-                        <h2 className="text-xl font-semibold text-mist glow-text">
-                            {searchQuery 
-                            ? `Results for "${searchQuery}"` 
-                            : 'Popular Games'}
-                            {!loading && games.length > 0 && (
-                                <span className="text-tan text-sm ml-2 glow-text">({games.length} games)</span>
-                            )}
-                        </h2>
-                    </div>
-                    
-                    <GameList 
-                        games={games} 
-                        onGameSelect={handleGameSelect} 
-                        loading={loading} 
-                    />
-                    
-                    {noResults && !loading && !error && (
-                        <div className="text-center py-12 bg-fog/30 backdrop-blur-sm rounded-lg border border-forest/50">
-                            <h3 className="text-xl font-semibold text-mist glow-text">No games found</h3>
-                            <p className="text-tan mt-2">Try a different search or adjust your filters</p>
+        <div>
+            {/* Error banner */}
+            {error && (
+                <div className="bg-red-900 text-red-200 p-4 rounded-lg shadow-lg mb-6">
+                    <h3 className="font-semibold mb-1">Error</h3>
+                    <p>{error}</p>
+                    {isApiKeyMissing && (
+                        <div className="mt-2 text-sm">
+                            <p className="font-semibold">How to fix:</p>
+                            <ol className="list-decimal list-inside ml-2 mt-1">
+                                <li>Get a free API key from <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" className="underline">RAWG API</a></li>
+                                <li>Create a <code className="bg-red-800 px-1 rounded">.env</code> file in your project root</li>
+                                <li>Add <code className="bg-red-800 px-1 rounded">VITE_RAWG_API_KEY=your_api_key_here</code></li>
+                                <li>Restart your development server</li>
+                            </ol>
                         </div>
                     )}
                 </div>
+            )}
+            
+            <SearchBar onSearch={handleSearch} />
+            
+            <div className="mt-8">
+                <Favorites onGameSelect={handleGameSelect} />
+                
+                <Filters onFilterChange={handleFilterChange} />
+                
+                <div className="mb-4">
+                    <h2 className="text-xl font-semibold text-white">
+                        {searchQuery 
+                        ? `Results for "${searchQuery}"` 
+                        : 'Popular Games'}
+                        {!loading && games.length > 0 && (
+                        <span className="text-gray-400 text-sm ml-2">({games.length} games)</span>
+                        )}
+                    </h2>
+                </div>
+                
+                <GameList 
+                    games={games} 
+                    onGameSelect={handleGameSelect} 
+                    loading={loading} 
+                />
+                
+                {noResults && !loading && !error && (
+                    <div className="text-center py-12">
+                        <h3 className="text-xl font-semibold text-gray-400">No games found</h3>
+                        <p className="text-gray-500 mt-2">Try a different search or adjust your filters</p>
+                    </div>
+                )}
             </div>
         </div>
     );

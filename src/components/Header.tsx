@@ -7,17 +7,15 @@ const Header: React.FC = () => {
 
     return (
         <header className="mb-8">
-            <div className="flex items-center justify-center md:justify-start">
-                <Link to="/" className="inline-flex items-center group">
-                    <h1 className="text-3xl font-bold">
-                        <span className="text-gold group-hover:text-ethereal transition-colors duration-300">Game</span>
-                        <span className="text-moonlight">Muse</span>
-                    </h1>
-                </Link>
-            </div>
-            {isHome && (
-                <p className="text-tan text-center md:text-left mt-1">Discover your next favorite game</p>
-            )}
+        <div className="flex items-center justify-center md:justify-start">
+            <Link to="/" className="flex items-center text-xl font-bold transition hover:opacity-80">
+            <span className="text-purple-500">Game</span>
+            <span className="text-white">Muse</span>
+            </Link>
+        </div>
+        {isHome && (
+            <p className="text-gray-400 text-center md:text-left">Discover your next favorite game</p>
+        )}
         </header>
     );
 };

@@ -4,13 +4,16 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import Home from './Pages/Home';
 import GameDetails from './Pages/GameDetails';
 import Header from './components/Header';
-import Background from './components/Background';
+import forestBg from './assets/forest-bg.png';
 
 const App: React.FC = () => {
   return (
     <FavoritesProvider>
       <Router>
-        <Background>
+        <div 
+          className="min-h-screen text-white bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: `url(${forestBg})` }}
+        >
           <div className="container mx-auto px-4 py-6">
             <Header />
             <Routes>
@@ -18,7 +21,7 @@ const App: React.FC = () => {
               <Route path="/game/:id" element={<GameDetails />} />
             </Routes>
           </div>
-        </Background>
+        </div>
       </Router>
     </FavoritesProvider>
   );
