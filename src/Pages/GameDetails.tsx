@@ -165,8 +165,8 @@ const GameDetails: React.FC = () => {
             </button>
                 
                 <Link to="/" className="flex items-center text-xl font-bold transition hover:opacity-80">
-                    <span className="text-purple-500">Game</span>
-                    <span className="text-white">Muse</span>
+                    {/* <span className="text-purple-500">Game</span>
+                    <span className="text-white">Muse</span> */}
                 </Link>
                 </div>
 

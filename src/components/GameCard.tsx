@@ -28,7 +28,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
 
     return (
         <div 
-        className="card-fantasy-highlight rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer"
+        className="card-fantasy-highlight rounded-lg overflow-hidden shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer bg-gradient-to-b from-sage to-gray-900"
         onClick={() => onClick(game.id)}
         >
         <div className="relative">
@@ -37,7 +37,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
             alt={game.name} 
             className="w-full h-48 object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-40"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>
             <button
             onClick={handleFavoriteClick}
             className={`absolute top-2 right-2 p-2 rounded-full ${
