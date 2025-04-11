@@ -112,16 +112,16 @@ const Home: React.FC = () => {
         <div>
             {/* Error banner */}
             {error && (
-                <div className="bg-red-900 bg-opacity-90 backdrop-blur-sm text-red-200 p-4 rounded-lg shadow-lg mb-6">
+                <div className="bg-autumn-red bg-opacity-90 backdrop-blur-sm text-red-200 p-4 rounded-lg shadow-lg mb-6 border border-red-800">
                     <h3 className="font-semibold mb-1">Error</h3>
                     <p>{error}</p>
                     {isApiKeyMissing && (
                         <div className="mt-2 text-sm">
                             <p className="font-semibold">How to fix:</p>
                             <ol className="list-decimal list-inside ml-2 mt-1">
-                                <li>Get a free API key from <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" className="underline">RAWG API</a></li>
-                                <li>Create a <code className="bg-red-800 px-1 rounded">.env</code> file in your project root</li>
-                                <li>Add <code className="bg-red-800 px-1 rounded">VITE_RAWG_API_KEY=your_api_key_here</code></li>
+                                <li>Get a free API key from <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" className="underline text-fae">RAWG API</a></li>
+                                <li>Create a <code className="bg-red-900 px-1 rounded">.env</code> file in your project root</li>
+                                <li>Add <code className="bg-red-900 px-1 rounded">VITE_RAWG_API_KEY=your_api_key_here</code></li>
                                 <li>Restart your development server</li>
                             </ol>
                         </div>
@@ -136,13 +136,13 @@ const Home: React.FC = () => {
                 
                 <Filters onFilterChange={handleFilterChange} />
                 
-                <div className="mb-4 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-3 rounded-lg">
+                <div className="mb-4 card-fantasy p-3 rounded-lg">
                     <h2 className="text-xl font-semibold text-white">
                         {searchQuery 
                         ? `Results for "${searchQuery}"` 
                         : 'Popular Games'}
                         {!loading && games.length > 0 && (
-                        <span className="text-gray-400 text-sm ml-2">({games.length} games)</span>
+                        <span className="text-gray-300 text-sm ml-2">({games.length} games)</span>
                         )}
                     </h2>
                 </div>
@@ -154,9 +154,9 @@ const Home: React.FC = () => {
                 />
                 
                 {noResults && !loading && !error && (
-                    <div className="text-center py-12 bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg">
-                        <h3 className="text-xl font-semibold text-gray-400">No games found</h3>
-                        <p className="text-gray-500 mt-2">Try a different search or adjust your filters</p>
+                    <div className="text-center py-12 card-fantasy rounded-lg">
+                        <h3 className="text-xl font-semibold text-fae">No games found</h3>
+                        <p className="text-gray-300 mt-2">Try a different search or adjust your filters</p>
                     </div>
                 )}
             </div>

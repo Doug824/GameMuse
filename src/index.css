@@ -12,12 +12,22 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Fantasy theme colors */
+  --color-fae-accent: #6ee7b7; /* Emerald glow */
+  --color-fae-accent-dark: #10b981; /* Darker emerald */
+  --color-druid-earth: #065f46; /* Deep forest green */
+  --color-druid-bark: #422006; /* Tree bark brown */
+  --color-forest-dark: #064e3b; /* Deep forest background */
+  --color-forest-shadow: #022c22; /* Darker forest shadow */
+  --color-moonlight: #e0f2fe; /* Soft moonlight */
+  --color-moss: #4ade80; /* Bright moss */
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #111827; /* Dark fallback if image doesn't load */
+  background-color: var(--color-forest-shadow); /* Dark fallback if image doesn't load */
 }
 
 /* Custom scrollbar styles */
@@ -27,21 +37,75 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(31, 41, 55, 0.5);
+  background: rgba(6, 78, 59, 0.5); /* Forest green track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(107, 114, 128, 0.5);
+  background: rgba(110, 231, 183, 0.5); /* Fae accent thumb */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
+  background: rgba(110, 231, 183, 0.7); /* Brighter on hover */
 }
 
 /* Additional styling for text readability on forest background */
 .text-shadow {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Fantasy theme utility classes */
+.bg-fae {
+  background-color: var(--color-fae-accent);
+}
+
+.bg-fae-dark {
+  background-color: var(--color-fae-accent-dark);
+}
+
+.bg-druid {
+  background-color: var(--color-druid-earth);
+}
+
+.bg-forest {
+  background-color: var(--color-forest-dark);
+}
+
+.bg-bark {
+  background-color: var(--color-druid-bark);
+}
+
+.text-fae {
+  color: var(--color-fae-accent);
+}
+
+.text-moonlight {
+  color: var(--color-moonlight);
+}
+
+.text-moss {
+  color: var(--color-moss);
+}
+
+.border-fae {
+  border-color: var(--color-fae-accent);
+}
+
+/* Card and element styling */
+.card-druid {
+  background-color: rgba(6, 95, 70, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(110, 231, 183, 0.2);
+}
+
+.card-fae {
+  background-color: rgba(2, 44, 34, 0.8);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 15px rgba(110, 231, 183, 0.15);
+}
+
+.glow-fae {
+  box-shadow: 0 0 8px rgba(110, 231, 183, 0.6);
 }
 
 /* Ensuring image backgrounds aren't affected by opacity */

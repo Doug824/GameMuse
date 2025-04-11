@@ -12,7 +12,11 @@ const App: React.FC = () => {
       <Router>
         <div 
           className="min-h-screen text-white bg-cover bg-center bg-fixed"
-          style={{ backgroundImage: `url(${forestBg})` }}
+          style={{ 
+            backgroundImage: `url(${forestBg})`,
+            backgroundColor: 'rgba(17, 24, 39, 0.85)', // Dark overlay similar to original
+            backgroundBlendMode: 'multiply'
+          }}
         >
           <div className="container mx-auto px-4 py-6">
             <Header />

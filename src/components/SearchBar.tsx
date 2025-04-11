@@ -22,11 +22,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for games..."
-            className="w-full px-5 py-3 pr-12 text-gray-200 bg-gray-800 bg-opacity-90 backdrop-blur-sm border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+            className="w-full px-5 py-3 pr-12 text-white bg-sage bg-opacity-90 backdrop-blur-sm border border-fae border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-fae focus:border-transparent transition shadow-lg"
             />
             <button
             type="submit"
-            className="absolute right-2 p-2 text-gray-400 hover:text-white transition"
+            className="absolute right-2 p-2 text-fae hover:text-white transition"
             aria-label="Search"
             >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

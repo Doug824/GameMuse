@@ -127,11 +127,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     ];
 
     return (
-        <div className="mb-6 bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg p-4 shadow-md">
+        <div className="mb-6 card-fantasy rounded-lg p-4 shadow-md">
         <div className="flex justify-between items-center mb-2">
             <button 
             onClick={toggleFilters}
-            className="flex items-center text-purple-400 hover:text-purple-300 transition"
+            className="flex items-center text-fae hover:text-white transition"
             >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
@@ -152,11 +152,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             <div className="mt-4 space-y-6">
             {/* Ordering */}
             <div>
-                <h3 className="text-gray-300 font-medium mb-2">Sort By</h3>
+                <h3 className="text-fae font-medium mb-2">Sort By</h3>
                 <select
                 value={filters.ordering}
                 onChange={(e) => handleFilterChange('ordering', e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-md p-2 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-sage-medium text-white rounded-md p-2 border border-fae border-opacity-20 focus:outline-none focus:ring-2 focus:ring-fae"
                 >
                 {orderingOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -168,11 +168,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             
             {/* Release Date Ranges */}
             <div>
-                <h3 className="text-gray-300 font-medium mb-2">Release Period</h3>
+                <h3 className="text-fae font-medium mb-2">Release Period</h3>
                 <select
                 value={filters.dates}
                 onChange={(e) => handleFilterChange('dates', e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-md p-2 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-sage-medium text-white rounded-md p-2 border border-fae border-opacity-20 focus:outline-none focus:ring-2 focus:ring-fae"
                 >
                 {yearRanges.map((range) => (
                     <option key={range.value} value={range.value}>
@@ -184,11 +184,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             
             {/* Genres */}
             <div>
-                <h3 className="text-gray-300 font-medium mb-2">Genres</h3>
+                <h3 className="text-fae font-medium mb-2">Genres</h3>
                 {loading ? (
                 <div className="flex flex-wrap gap-2 animate-pulse">
                     {[...Array(8)].map((_, index) => (
-                    <div key={index} className="h-8 w-20 bg-gray-700 rounded"></div>
+                    <div key={index} className="h-8 w-20 bg-sage-medium rounded"></div>
                     ))}
                 </div>
                 ) : (
@@ -199,8 +199,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
                         onClick={() => handleFilterChange('genres', genre.id.toString())}
                         className={`px-3 py-1 rounded-full text-sm transition ${
                         filters.genres.includes(genre.id.toString())
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            ? 'bg-fae-dark text-white border border-fae border-opacity-30'
+                            : 'bg-sage-medium text-white hover:bg-gray-700 border border-fae border-opacity-10'
                         }`}
                     >
                         {genre.name}
@@ -212,11 +212,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             
             {/* Platforms */}
             <div>
-                <h3 className="text-gray-300 font-medium mb-2">Platforms</h3>
+                <h3 className="text-fae font-medium mb-2">Platforms</h3>
                 {loading ? (
                 <div className="flex flex-wrap gap-2 animate-pulse">
                     {[...Array(8)].map((_, index) => (
-                    <div key={index} className="h-8 w-24 bg-gray-700 rounded"></div>
+                    <div key={index} className="h-8 w-24 bg-sage-medium rounded"></div>
                     ))}
                 </div>
                 ) : (
@@ -227,8 +227,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
                         onClick={() => handleFilterChange('platforms', platform.id.toString())}
                         className={`px-3 py-1 rounded-full text-sm transition ${
                         filters.platforms.includes(platform.id.toString())
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            ? 'bg-fae-dark text-white border border-fae border-opacity-30'
+                            : 'bg-sage-medium text-white hover:bg-gray-700 border border-fae border-opacity-10'
                         }`}
                     >
                         {platform.name}

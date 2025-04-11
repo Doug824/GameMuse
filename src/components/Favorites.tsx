@@ -3,7 +3,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import GameCard from './GameCard';
 
 interface FavoritesProps {
-onGameSelect: (gameId: number) => void;
+  onGameSelect: (gameId: number) => void;
 }
 
 const Favorites: React.FC<FavoritesProps> = ({ onGameSelect }) => {
@@ -15,15 +15,15 @@ const Favorites: React.FC<FavoritesProps> = ({ onGameSelect }) => {
     };
 
     return (
-    <div className="bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden mb-6">
+    <div className="card-fantasy rounded-lg shadow-lg overflow-hidden mb-6">
         <button
             onClick={toggleOpen}
-            className="w-full flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 transition"
+            className="w-full flex justify-between items-center p-4 hover:bg-sage-medium transition"
         >
             <div className="flex items-center">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-red-500 mr-2"
+                className="h-5 w-5 text-fae mr-2"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -36,13 +36,13 @@ const Favorites: React.FC<FavoritesProps> = ({ onGameSelect }) => {
                 />
             </svg>
             <h2 className="text-lg font-semibold text-white">Your Favorites</h2>
-            <span className="ml-2 px-2 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
+            <span className="ml-2 px-2 py-1 bg-gray-700 rounded-full text-xs text-gray-300 border border-fae border-opacity-10">
                 {favorites.length}
             </span>
             </div>
             <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+            className={`h-5 w-5 text-fae transition-transform duration-300 ${
                 isOpen ? 'rotate-180' : ''
             }`}
             fill="none"
@@ -62,8 +62,8 @@ const Favorites: React.FC<FavoritesProps> = ({ onGameSelect }) => {
             <div className="p-4">
             {favorites.length === 0 ? (
                 <div className="text-center py-8">
-                <p className="text-gray-400">You haven't added any favorites yet.</p>
-                <p className="text-gray-500 text-sm mt-1">
+                <p className="text-gray-300">You haven't added any favorites yet.</p>
+                <p className="text-gray-400 text-sm mt-1">
                     Heart the games you love to see them here!
                 </p>
                 </div>

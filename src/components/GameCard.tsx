@@ -23,9 +23,12 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
     // Format release date to just show the year
     const releaseYear = game.released ? new Date(game.released).getFullYear() : 'TBA';
 
+    // Get the top platforms (limit to 3 to avoid overcrowding)
+    const topPlatforms = game.platforms?.slice(0, 3).map(item => item.platform) || [];
+
     return (
         <div 
-        className="bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer"
+        className="card-fantasy-highlight rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer"
         onClick={() => onClick(game.id)}
         >
         <div className="relative">
@@ -34,10 +37,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
             alt={game.name} 
             className="w-full h-48 object-cover"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-40"></div>
             <button
             onClick={handleFavoriteClick}
             className={`absolute top-2 right-2 p-2 rounded-full ${
-                isGameFavorite ? 'bg-red-500' : 'bg-gray-700 bg-opacity-70 hover:bg-gray-600'
+                isGameFavorite ? 'bg-fae-dark glow-fae' : 'bg-gray-800 bg-opacity-70 hover:bg-gray-700'
             }`}
             >
             <svg 
@@ -59,26 +63,56 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
         <div className="p-4">
             <h3 className="text-lg font-semibold text-white mb-1 truncate">{game.name}</h3>
             <div className="flex justify-between items-center">
-            <span className="text-gray-400 text-sm">{releaseYear}</span>
+            <span className="text-gray-300 text-sm">{releaseYear}</span>
             {game.metacritic && (
                 <span className={`px-2 py-1 text-xs rounded font-bold ${
                 game.metacritic >= 75 ? 'bg-green-800 text-green-200' :
-                game.metacritic >= 50 ? 'bg-yellow-700 text-yellow-100' :
+                game.metacritic >= 50 ? 'bg-autumn-gold text-white' :
                 'bg-red-800 text-red-200'
                 }`}>
                 {game.metacritic}
                 </span>
             )}
             </div>
-            <div className="mt-2 flex flex-wrap gap-1">
-            {game.genres?.slice(0, 2).map((genre) => (
-                <span 
-                key={genre.id} 
-                className="px-2 py-1 bg-gray-700 rounded text-gray-300 text-xs"
-                >
-                {genre.name}
-                </span>
-            ))}
+            
+            {/* Genres section */}
+            <div className="mt-2">
+                <div className="text-xs text-gray-400 mb-1">Genres:</div>
+                <div className="flex flex-wrap gap-1">
+                {game.genres?.slice(0, 3).map((genre) => (
+                    <span 
+                    key={genre.id} 
+                    className="px-2 py-1 bg-sage-medium rounded text-gray-200 text-xs"
+                    >
+                    {genre.name}
+                    </span>
+                ))}
+                {(!game.genres || game.genres.length === 0) && (
+                    <span className="text-gray-400 text-xs">No genres available</span>
+                )}
+                </div>
+            </div>
+            
+            {/* Platforms section */}
+            <div className="mt-2">
+                <div className="text-xs text-gray-400 mb-1">Platforms:</div>
+                <div className="flex flex-wrap gap-1">
+                {topPlatforms.length > 0 ? (
+                    topPlatforms.map((platform) => (
+                    <span 
+                        key={platform.id} 
+                        className="px-2 py-1 bg-gray-800 rounded text-gray-300 text-xs"
+                    >
+                        {platform.name}
+                    </span>
+                    ))
+                ) : (
+                    <span className="text-gray-400 text-xs">No platforms available</span>
+                )}
+                {game.platforms && game.platforms.length > 3 && (
+                    <span className="text-gray-400 text-xs">+{game.platforms.length - 3} more</span>
+                )}
+                </div>
             </div>
         </div>
         </div>
