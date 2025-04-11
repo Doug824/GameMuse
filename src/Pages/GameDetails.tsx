@@ -240,13 +240,13 @@ const GameDetails: React.FC = () => {
                 </div>
 
                 {/* Right column with game info */}
-                <div className="w-full lg:w-1/3 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-6 rounded-lg shadow-lg">
+                <div className="w-full lg:w-1/3 bg-gray-900 bg-opacity-80 backdrop-blur-sm p-6 rounded-lg shadow-xl border border-fae border-opacity-20">
                     <div className="flex justify-between items-start mb-4">
                         <h1 className="text-3xl font-bold text-white">{game.name}</h1>
                         <button
                             onClick={handleFavoriteToggle}
                             className={`p-2 rounded-full ${
-                                isFavorite(game.id) ? 'bg-red-500 text-white' : 'bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600'
+                                isFavorite(game.id) ? 'bg-fae-dark text-white glow-fae' : 'bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600'
                             } transition`}
                         >
                             <svg 
@@ -354,7 +354,7 @@ const GameDetails: React.FC = () => {
 
             {/* Game description */}
             {game.description && (
-                <div className="mt-8 bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg p-6 shadow-lg">
+                <div className="mt-8 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-lg p-6 shadow-xl border border-fae border-opacity-20">
                     <h2 className="text-xl font-semibold text-white mb-4">About</h2>
                     <div 
                         className="text-gray-300 prose prose-invert max-w-none"
