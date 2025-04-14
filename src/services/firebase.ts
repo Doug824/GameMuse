@@ -3,8 +3,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, UserCredential, 
 import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, query, where, getDocs } from 'firebase/firestore';
 import { Game } from './api';
 
-// Replace with your Firebase project configuration
-// You'll need to copy this from your Firebase console
+
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
