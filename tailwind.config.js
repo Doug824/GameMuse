@@ -6,6 +6,13 @@ export default {
   ],
   theme: {
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100%',
+          },
+        },
+      },
       colors: {
         'fae': {
           DEFAULT: '#9932cc',
@@ -21,6 +28,16 @@ export default {
           'gold': '#d4af37',
           'red': '#8b0000',
         },
+      },
+      screens: {
+        'xs': '480px',
+      },
+      scale: {
+        '98': '.98',
+        '102': '1.02',
+      },
+      spacing: {
+        '18': '4.5rem',
       },
       boxShadow: {
         'fantasy': '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(153, 50, 204, 0.2)',
