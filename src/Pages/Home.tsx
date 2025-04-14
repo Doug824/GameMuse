@@ -5,6 +5,7 @@ import SearchBar from '../components/SearchBar';
 import GameList from '../components/GameList';
 import Filters from '../components/Filters';
 import Favorites from '../components/Favorites';
+import CollectionsButton from '../components/CollectionsButton';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -132,7 +133,10 @@ const Home: React.FC = () => {
             <SearchBar onSearch={handleSearch} />
             
             <div className="mt-8">
-                <Favorites onGameSelect={handleGameSelect} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <Favorites onGameSelect={handleGameSelect} />
+                    <CollectionsButton />
+                </div>
                 
                 <Filters onFilterChange={handleFilterChange} />
                 
