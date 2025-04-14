@@ -113,11 +113,11 @@ const Home: React.FC = () => {
         <div>
             {/* Error banner */}
             {error && (
-                <div className="bg-autumn-red bg-opacity-90 backdrop-blur-sm text-red-200 p-4 rounded-lg shadow-lg mb-6 border border-red-800">
+                <div className="bg-autumn-red bg-opacity-90 backdrop-blur-sm text-red-200 p-3 sm:p-4 rounded-lg shadow-lg mb-4 sm:mb-6 border border-red-800 text-sm sm:text-base">
                     <h3 className="font-semibold mb-1">Error</h3>
                     <p>{error}</p>
                     {isApiKeyMissing && (
-                        <div className="mt-2 text-sm">
+                        <div className="mt-2 text-xs sm:text-sm">
                             <p className="font-semibold">How to fix:</p>
                             <ol className="list-decimal list-inside ml-2 mt-1">
                                 <li>Get a free API key from <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" className="underline text-fae">RAWG API</a></li>
@@ -132,8 +132,8 @@ const Home: React.FC = () => {
             
             <SearchBar onSearch={handleSearch} />
             
-            <div className="mt-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="mt-4 sm:mt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                     <Favorites onGameSelect={handleGameSelect} />
                     <CollectionsButton />
                 </div>
@@ -141,7 +141,7 @@ const Home: React.FC = () => {
                 <Filters onFilterChange={handleFilterChange} />
                 
                 <div className="mb-4 card-fantasy p-3 rounded-lg">
-                    <h2 className="text-xl font-semibold text-white">
+                    <h2 className="text-lg sm:text-xl font-semibold text-white">
                         {searchQuery 
                         ? `Results for "${searchQuery}"` 
                         : 'Popular Games'}
@@ -158,9 +158,9 @@ const Home: React.FC = () => {
                 />
                 
                 {noResults && !loading && !error && (
-                    <div className="text-center py-12 card-fantasy rounded-lg">
-                        <h3 className="text-xl font-semibold text-fae">No games found</h3>
-                        <p className="text-gray-300 mt-2">Try a different search or adjust your filters</p>
+                    <div className="text-center py-8 sm:py-12 card-fantasy rounded-lg">
+                        <h3 className="text-lg sm:text-xl font-semibold text-fae">No games found</h3>
+                        <p className="text-gray-300 mt-2 text-sm sm:text-base">Try a different search or adjust your filters</p>
                     </div>
                 )}
             </div>
