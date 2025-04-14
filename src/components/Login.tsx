@@ -6,22 +6,22 @@ const Login: React.FC = () => {
     const { currentUser, isLoading } = useAuth();
     const [loginError, setLoginError] = useState<string | null>(null);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [imageError, setImageError] = useState(false);
     
     const handleSignIn = async () => {
         try {
-            setIsLoggingIn(true);
-            setLoginError(null);
-            await signInWithGoogle();
-            } catch (error) {
-            console.error('Login error:', error);
-            // Add more detailed error message
-            if (error instanceof Error) {
-                setLoginError(`Failed to sign in: ${error.message}`);
-            } else {
-                setLoginError('Failed to sign in. Please try again.');
-            }
-            } finally {
-            setIsLoggingIn(false);
+        setIsLoggingIn(true);
+        setLoginError(null);
+        await signInWithGoogle();
+        } catch (error) {
+        console.error('Login error:', error);
+        if (error instanceof Error) {
+            setLoginError(`Failed to sign in: ${error.message}`);
+        } else {
+            setLoginError('Failed to sign in. Please try again.');
+        }
+        } finally {
+        setIsLoggingIn(false);
         }
     };
 
@@ -36,31 +36,44 @@ const Login: React.FC = () => {
         }
     };
     
+    // Handle image load error
+    const handleImageError = () => {
+        setImageError(true);
+    };
+    
     if (isLoading) {
         return (
             <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 rounded-full bg-fae animate-pulse"></div>
                 <span className="text-gray-300 text-sm">Loading...</span>
             </div>
-            );
-        }
+        );
+    }
         
-        return (
-            <div className="relative">
+    return (
+        <div className="relative">
             {currentUser ? (
                 <div className="flex items-center">
                 <div className="relative group">
-                    {currentUser.photoURL && (
-                    <img 
-                        src={currentUser.photoURL} 
-                        alt={currentUser.displayName || 'User'} 
-                        className="w-8 h-8 rounded-full cursor-pointer border border-fae border-opacity-50"
-                    />
+                    {currentUser.photoURL && !imageError ? (
+                        <img 
+                            src={currentUser.photoURL} 
+                            alt={currentUser.displayName || 'User'} 
+                            className="w-8 h-8 rounded-full cursor-pointer border border-fae border-opacity-50"
+                            onError={handleImageError}
+                        />
+                    ) : (
+                        // Fallback user icon if image fails to load
+                        <div className="w-8 h-8 rounded-full cursor-pointer border border-fae border-opacity-50 bg-gray-700 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
+                        </div>
                     )}
                     
                     <div className="absolute right-0 mt-2 w-48 bg-gray-900 bg-opacity-90 backdrop-blur-sm rounded-md shadow-lg py-1 z-10 hidden group-hover:block border border-fae border-opacity-20">
                     <div className="px-4 py-2 border-b border-gray-700">
-                        <p className="text-sm text-white truncate">{currentUser.displayName}</p>
+                        <p className="text-sm text-white truncate">{currentUser.displayName || 'User'}</p>
                         <p className="text-xs text-gray-400 truncate">{currentUser.email}</p>
                     </div>
                     <button
