@@ -160,11 +160,12 @@ const GameDetails: React.FC = () => {
         })
         : 'TBA';
 
-    // For mobile, truncate long descriptions
-    const descriptionIsTooLong = game.description && game.description.length > 500;
+    // For mobile, truncate long descriptions - safely handle undefined description
+    const gameDescription = game.description || game.description_raw || '';
+    const descriptionIsTooLong = gameDescription.length > 500;
     const truncatedDescription = descriptionIsTooLong && !showFullDescription 
-        ? `${game.description.substring(0, 450)}...` 
-        : game.description;
+        ? `${gameDescription.substring(0, 450)}...` 
+        : gameDescription;
 
     return (
         <div className="container mx-auto px-4 py-4 sm:py-8">
@@ -174,8 +175,8 @@ const GameDetails: React.FC = () => {
                     className="flex items-center text-gray-400 hover:text-white transition p-2 -ml-2"
                     aria-label="Go back"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
                     </svg>
                     Back
                 </button>
@@ -423,7 +424,7 @@ const GameDetails: React.FC = () => {
             </div>
 
             {/* Game description with "Read more" for mobile */}
-            {game.description && (
+            {gameDescription && (
                 <div className="mt-6 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-lg p-4 sm:p-6 shadow-xl border border-fae border-opacity-20">
                     <h2 className="text-xl font-semibold text-white mb-3">About</h2>
                     <div 
