@@ -23,6 +23,7 @@ const GameDetails: React.FC = () => {
     const [fetchErrors, setFetchErrors] = useState<{[key: string]: string}>({});
     const [developerGames, setDeveloperGames] = useState<Game[]>([]);
     const [loadingDeveloperGames, setLoadingDeveloperGames] = useState<boolean>(false);
+    const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchGameData = async () => {
@@ -94,6 +95,11 @@ const GameDetails: React.FC = () => {
         if (id) {
             fetchGameData();
         }
+        
+        // Reset the active image and description state when navigating between games
+        setActiveImage(0);
+        setShowFullDescription(false);
+        
     }, [id]);
 
     const handleFavoriteToggle = () => {
@@ -112,19 +118,21 @@ const GameDetails: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-8 animate-pulse">
-                <div className="h-8 w-64 bg-gray-700 rounded mb-4"></div>
-                <div className="h-96 w-full bg-gray-700 rounded mb-8"></div>
-                <div className="h-6 w-full bg-gray-700 rounded mb-2"></div>
-                <div className="h-6 w-full bg-gray-700 rounded mb-2"></div>
-                <div className="h-6 w-3/4 bg-gray-700 rounded"></div>
+            <div className="container mx-auto px-4 py-4 sm:py-8 animate-pulse">
+                <div className="flex items-center mb-4">
+                    <div className="h-6 w-16 bg-gray-700 rounded"></div>
+                </div>
+                <div className="h-56 sm:h-64 md:h-80 w-full bg-gray-700 rounded mb-4 sm:mb-8"></div>
+                <div className="h-6 w-3/4 bg-gray-700 rounded mb-2"></div>
+                <div className="h-6 w-1/2 bg-gray-700 rounded mb-2"></div>
+                <div className="h-6 w-2/3 bg-gray-700 rounded"></div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="container mx-auto px-4 py-8 text-center">
+            <div className="container mx-auto px-4 py-6 text-center">
                 <div className="bg-red-900 text-red-200 p-4 rounded-lg shadow-lg">
                     <h2 className="text-xl font-semibold mb-2">Error</h2>
                     <p>{error}</p>
@@ -152,28 +160,30 @@ const GameDetails: React.FC = () => {
         })
         : 'TBA';
 
+    // For mobile, truncate long descriptions
+    const descriptionIsTooLong = game.description && game.description.length > 500;
+    const truncatedDescription = descriptionIsTooLong && !showFullDescription 
+        ? `${game.description.substring(0, 450)}...` 
+        : game.description;
+
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center justify-between mb-6">
+        <div className="container mx-auto px-4 py-4 sm:py-8">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <button 
-                onClick={() => navigate(-1)}
-                className="flex items-center text-gray-400 hover:text-white mb-6 transition"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                </svg>
-                Back
-            </button>
-                
-                <Link to="/" className="flex items-center text-xl font-bold transition hover:opacity-80">
-                    {/* <span className="text-purple-500">Game</span>
-                    <span className="text-white">Muse</span> */}
-                </Link>
-                </div>
+                    onClick={() => navigate(-1)}
+                    className="flex items-center text-gray-400 hover:text-white transition p-2 -ml-2"
+                    aria-label="Go back"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                    </svg>
+                    Back
+                </button>
+            </div>
 
             {/* Show partial fetch errors as warnings */}
             {Object.keys(fetchErrors).length > 0 && (
-                <div className="bg-yellow-900 text-yellow-200 p-3 rounded-lg shadow-lg mb-6 text-sm">
+                <div className="bg-yellow-900 text-yellow-200 p-3 rounded-lg shadow-lg mb-4 sm:mb-6 text-xs sm:text-sm">
                     <h3 className="font-semibold mb-1">Some content could not be loaded:</h3>
                     <ul className="list-disc list-inside">
                         {Object.values(fetchErrors).map((errorMsg, index) => (
@@ -183,10 +193,11 @@ const GameDetails: React.FC = () => {
                 </div>
             )}
 
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Left column with image gallery */}
+            {/* Main game information - stacked on mobile, side by side on larger screens */}
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+                {/* Screenshot gallery - full width on mobile */}
                 <div className="w-full lg:w-2/3">
-                    <div className="relative rounded-lg overflow-hidden bg-gray-800 shadow-lg h-96">
+                    <div className="relative rounded-lg overflow-hidden bg-gray-800 shadow-lg h-56 sm:h-64 md:h-80">
                         <img 
                             src={screenshots[activeImage]?.image || game.background_image || 'https://via.placeholder.com/1200x675?text=No+Image'} 
                             alt={`${game.name} screenshot`}
@@ -206,6 +217,7 @@ const GameDetails: React.FC = () => {
                                     onClick={() => setActiveImage((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1))}
                                     className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
                                     aria-label="Previous screenshot"
+                                    style={{ minHeight: '40px', minWidth: '40px' }} // Ensuring minimum touch target size
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -215,6 +227,7 @@ const GameDetails: React.FC = () => {
                                     onClick={() => setActiveImage((prev) => (prev === screenshots.length - 1 ? 0 : prev + 1))}
                                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-70 transition"
                                     aria-label="Next screenshot"
+                                    style={{ minHeight: '40px', minWidth: '40px' }} // Ensuring minimum touch target size
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -224,15 +237,15 @@ const GameDetails: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Thumbnail gallery */}
+                    {/* Thumbnail gallery - scrollable on all screens */}
                     {screenshots.length > 1 && (
-                        <div className="flex overflow-x-auto gap-2 mt-2 pb-2">
+                        <div className="flex overflow-x-auto gap-2 mt-2 pb-2 snap-x">
                             {screenshots.map((screenshot, index) => (
                                 <img 
                                     key={screenshot.id}
                                     src={screenshot.image}
                                     alt={`${game.name} thumbnail ${index + 1}`}
-                                    className={`h-20 w-36 object-cover rounded cursor-pointer transition ${activeImage === index ? 'ring-2 ring-purple-500' : 'opacity-70 hover:opacity-100'}`}
+                                    className={`h-16 sm:h-20 w-28 sm:w-36 object-cover rounded cursor-pointer transition snap-start ${activeImage === index ? 'ring-2 ring-purple-500' : 'opacity-70 hover:opacity-100'}`}
                                     onClick={() => setActiveImage(index)}
                                 />
                             ))}
@@ -240,15 +253,17 @@ const GameDetails: React.FC = () => {
                     )}
                 </div>
 
-                {/* Right column with game info */}
-                <div className="w-full lg:w-1/3 bg-gray-900 bg-opacity-80 backdrop-blur-sm p-6 rounded-lg shadow-xl border border-fae border-opacity-20">
+                {/* Game info card - full width on mobile */}
+                <div className="w-full lg:w-1/3 bg-gray-900 bg-opacity-80 backdrop-blur-sm p-4 sm:p-6 rounded-lg shadow-xl border border-fae border-opacity-20">
                     <div className="flex justify-between items-start mb-4">
-                        <h1 className="text-3xl font-bold text-white">{game.name}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white">{game.name}</h1>
                         <button
                             onClick={handleFavoriteToggle}
                             className={`p-2 rounded-full ${
                                 isFavorite(game.id) ? 'bg-fae-dark text-white glow-fae' : 'bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600'
                             } transition`}
+                            aria-label={isFavorite(game.id) ? "Remove from favorites" : "Add to favorites"}
+                            style={{ minHeight: '40px', minWidth: '40px' }} // Ensuring minimum touch target size
                         >
                             <svg 
                                 xmlns="http://www.w3.org/2000/svg" 
@@ -300,8 +315,30 @@ const GameDetails: React.FC = () => {
                         </div>
                     )}
 
+                    {/* Collapsible platforms section for mobile */}
+                    <details className="mb-4 lg:hidden">
+                        <summary className="text-gray-400 text-sm mb-1 cursor-pointer focus:outline-none">
+                            Platforms
+                        </summary>
+                        {game.platforms && game.platforms.length > 0 && (
+                            <div className="mt-2">
+                                <div className="flex flex-wrap gap-2">
+                                    {game.platforms.map((platform) => (
+                                        <span 
+                                            key={platform.platform.id} 
+                                            className="px-2 py-1 bg-gray-700 rounded text-gray-300 text-sm"
+                                        >
+                                            {platform.platform.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </details>
+
+                    {/* Desktop view for platforms */}
                     {game.platforms && game.platforms.length > 0 && (
-                        <div className="mb-4">
+                        <div className="mb-4 hidden lg:block">
                             <h2 className="text-gray-400 text-sm mb-1">Platforms</h2>
                             <div className="flex flex-wrap gap-2">
                                 {game.platforms.map((platform) => (
@@ -316,35 +353,67 @@ const GameDetails: React.FC = () => {
                         </div>
                     )}
 
-                    {game.developers && game.developers.length > 0 && (
-                        <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Developers</h2>
-                            <p className="text-white">{game.developers.map(dev => dev.name).join(', ')}</p>
+                    {/* Collapsible developers section for mobile */}
+                    <details className="mb-4 lg:hidden">
+                        <summary className="text-gray-400 text-sm mb-1 cursor-pointer focus:outline-none">
+                            Developers & Publishers
+                        </summary>
+                        <div className="mt-2 space-y-3">
+                            {game.developers && game.developers.length > 0 && (
+                                <div>
+                                    <h3 className="text-gray-400 text-xs">Developers</h3>
+                                    <p className="text-white text-sm">{game.developers.map(dev => dev.name).join(', ')}</p>
+                                </div>
+                            )}
+                            
+                            {game.publishers && game.publishers.length > 0 && (
+                                <div>
+                                    <h3 className="text-gray-400 text-xs">Publishers</h3>
+                                    <p className="text-white text-sm">{game.publishers.map(pub => pub.name).join(', ')}</p>
+                                </div>
+                            )}
+                            
+                            {game.esrb_rating && (
+                                <div>
+                                    <h3 className="text-gray-400 text-xs">Age Rating</h3>
+                                    <p className="text-white text-sm">{game.esrb_rating.name}</p>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </details>
 
-                    {game.publishers && game.publishers.length > 0 && (
-                        <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Publishers</h2>
-                            <p className="text-white">{game.publishers.map(pub => pub.name).join(', ')}</p>
-                        </div>
-                    )}
+                    {/* Desktop view for developers and publishers */}
+                    <div className="hidden lg:block space-y-4">
+                        {game.developers && game.developers.length > 0 && (
+                            <div>
+                                <h2 className="text-gray-400 text-sm mb-1">Developers</h2>
+                                <p className="text-white">{game.developers.map(dev => dev.name).join(', ')}</p>
+                            </div>
+                        )}
 
-                    {game.esrb_rating && (
-                        <div className="mb-4">
-                            <h2 className="text-gray-400 text-sm mb-1">Age Rating</h2>
-                            <p className="text-white">{game.esrb_rating.name}</p>
-                        </div>
-                    )}
+                        {game.publishers && game.publishers.length > 0 && (
+                            <div>
+                                <h2 className="text-gray-400 text-sm mb-1">Publishers</h2>
+                                <p className="text-white">{game.publishers.map(pub => pub.name).join(', ')}</p>
+                            </div>
+                        )}
+
+                        {game.esrb_rating && (
+                            <div>
+                                <h2 className="text-gray-400 text-sm mb-1">Age Rating</h2>
+                                <p className="text-white">{game.esrb_rating.name}</p>
+                            </div>
+                        )}
+                    </div>
 
                     {game.website && (
-                        <div className="mb-4">
+                        <div className="mt-4">
                             <h2 className="text-gray-400 text-sm mb-1">Website</h2>
                             <a 
                                 href={game.website} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
-                                className="text-purple-400 hover:text-purple-300 transition"
+                                className="text-purple-400 hover:text-purple-300 transition text-sm break-words"
                             >
                                 {game.website}
                             </a>
@@ -353,55 +422,64 @@ const GameDetails: React.FC = () => {
                 </div>
             </div>
 
-            {/* Game description */}
+            {/* Game description with "Read more" for mobile */}
             {game.description && (
-                <div className="mt-8 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-lg p-6 shadow-xl border border-fae border-opacity-20">
-                    <h2 className="text-xl font-semibold text-white mb-4">About</h2>
+                <div className="mt-6 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-lg p-4 sm:p-6 shadow-xl border border-fae border-opacity-20">
+                    <h2 className="text-xl font-semibold text-white mb-3">About</h2>
                     <div 
-                        className="text-gray-300 prose prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: game.description }}
+                        className="text-gray-300 prose prose-invert max-w-none text-sm sm:text-base"
+                        dangerouslySetInnerHTML={{ __html: truncatedDescription }}
                     />
+                    
+                    {descriptionIsTooLong && (
+                        <button 
+                            onClick={() => setShowFullDescription(!showFullDescription)}
+                            className="mt-2 text-purple-400 hover:text-purple-300 text-sm transition"
+                        >
+                            {showFullDescription ? 'Show less' : 'Read more'}
+                        </button>
+                    )}
                 </div>
             )}
             
-            {/* Collections */}
-            <Collections activeGame={game} />
+            {/* Collections section */}
+            <div className="mt-6">
+                <Collections activeGame={game} />
+            </div>
 
-            {/* Developer games section */}
-            {game.developers && game.developers.length > 0 && (
-                <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">
+            {/* Developer games section - more compact on mobile */}
+            {game.developers && game.developers.length > 0 && developerGames.length > 0 && (
+                <div className="mt-6">
+                    <h2 className="text-xl font-semibold text-white mb-3 sm:mb-4">
                         More Games by {game.developers[0].name}
                     </h2>
                     
                     {loadingDeveloperGames ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 animate-pulse">
                             {[...Array(4)].map((_, index) => (
                                 <div key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                                    <div className="w-full h-48 bg-gray-700"></div>
-                                    <div className="p-4">
-                                        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+                                    <div className="w-full h-36 bg-gray-700"></div>
+                                    <div className="p-3 sm:p-4">
+                                        <div className="h-5 bg-gray-700 rounded w-3/4 mb-2"></div>
                                         <div className="h-4 bg-gray-700 rounded w-1/2"></div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    ) : developerGames.length > 0 ? (
+                    ) : (
                         <GameList 
                             games={developerGames} 
                             onGameSelect={handleSimilarGameSelect} 
                             loading={false} 
                         />
-                    ) : (
-                        <p className="text-gray-400">No other games from this developer found.</p>
                     )}
                 </div>
             )}
 
-            {/* Similar games section */}
+            {/* Similar games section - more compact on mobile */}
             {similarGames.length > 0 && (
-                <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Similar Games</h2>
+                <div className="mt-6">
+                    <h2 className="text-xl font-semibold text-white mb-3 sm:mb-4">Similar Games</h2>
                     <GameList 
                         games={similarGames} 
                         onGameSelect={handleSimilarGameSelect} 
