@@ -9,16 +9,21 @@ const Login: React.FC = () => {
     
     const handleSignIn = async () => {
         try {
-        setIsLoggingIn(true);
-        setLoginError(null);
-        await signInWithGoogle();
-        } catch (error) {
-        console.error('Login error:', error);
-        setLoginError('Failed to sign in. Please try again.');
-        } finally {
-        setIsLoggingIn(false);
+            setIsLoggingIn(true);
+            setLoginError(null);
+            await signInWithGoogle();
+            } catch (error) {
+            console.error('Login error:', error);
+            // Add more detailed error message
+            if (error instanceof Error) {
+                setLoginError(`Failed to sign in: ${error.message}`);
+            } else {
+                setLoginError('Failed to sign in. Please try again.');
+            }
+            } finally {
+            setIsLoggingIn(false);
         }
-};
+    };
 
     const handleSignOut = async () => {
         try {
