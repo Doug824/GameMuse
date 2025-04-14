@@ -16,20 +16,22 @@ const App: React.FC = () => {
         <CollectionsProvider>
           <Router>
             <div 
-              className="min-h-screen text-white bg-cover bg-center bg-fixed"
+              className="min-h-screen text-white bg-cover bg-center"
               style={{ 
                 backgroundImage: `url(${forestBg})`,
                 backgroundColor: 'rgba(17, 24, 39, 0.85)',
                 backgroundBlendMode: 'multiply'
               }}
             >
-              <div className="container mx-auto px-4 py-6">
-                <Header />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/game/:id" element={<GameDetails />} />
-                  <Route path="/collection/:id" element={<CollectionDetail />} />
-                </Routes>
+              <div className="min-h-screen bg-gray-900 bg-opacity-60">
+                <div className="container mx-auto px-4 py-6">
+                  <Header />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/game/:id" element={<GameDetails />} />
+                    <Route path="/collection/:id" element={<CollectionDetail />} />
+                  </Routes>
+                </div>
               </div>
             </div>
           </Router>
