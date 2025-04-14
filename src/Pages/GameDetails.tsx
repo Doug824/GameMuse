@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getGameDetails, getGameScreenshots, getSimilarGames, getGamesByDeveloper, Game, Screenshot } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import GameList from '../components/GameList';
+import Collections from '../components/Collections';
 
 interface GameDetailsParams {
     id: string;
@@ -362,6 +363,9 @@ const GameDetails: React.FC = () => {
                     />
                 </div>
             )}
+            
+            {/* Collections */}
+            <Collections activeGame={game} />
 
             {/* Developer games section */}
             {game.developers && game.developers.length > 0 && (

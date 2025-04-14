@@ -83,10 +83,10 @@ export const getUserCollections = async (userId: string): Promise<GameCollection
     return collections;
 };
 
-export const createCollection = async (collection: Omit<GameCollection, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+export const createCollection = async (collectionData: Omit<GameCollection, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
     const collectionRef = doc(collection(db, 'collections'));
     const newCollection: GameCollection = {
-    ...collection,
+    ...collectionData,
     id: collectionRef.id,
     createdAt: Date.now(),
     updatedAt: Date.now()
