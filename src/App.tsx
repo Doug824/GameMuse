@@ -16,18 +16,13 @@ const App: React.FC = () => {
       <FavoritesProvider>
         <CollectionsProvider>
           <Router>
-            {/* 
-              The key fix here: 
-              1. Remove the nested div with min-h-screen and move bg-opacity to the outer div
-              2. Use a proper "page-wrapper" structure that stretches with content
-            */}
             <div className="flex flex-col min-h-screen bg-gray-900 text-white"
                 style={{ 
                   backgroundImage: `url(${forestBg})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundAttachment: 'fixed',
-                  backgroundColor: 'rgba(17, 24, 39, 0.85)',
+                  backgroundColor: 'rgba(17, 24, 39, 0.35)',
                   backgroundBlendMode: 'multiply'
                 }}>
               <div className="flex-grow">
