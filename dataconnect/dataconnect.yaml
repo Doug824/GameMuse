@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "gamekindle"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "gamekindle-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
