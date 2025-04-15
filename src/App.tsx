@@ -7,6 +7,7 @@ import Home from './Pages/Home';
 import GameDetails from './Pages/GameDetails';
 import CollectionDetail from './Pages/CollectionDetail';
 import Header from './components/Header';
+import InstallPrompt from './components/InstallPrompt';
 import forestBg from './assets/forest-bg.png';
 import './styles/mobile.css'; // Import mobile-specific styles
 
@@ -16,11 +17,6 @@ const App: React.FC = () => {
       <FavoritesProvider>
         <CollectionsProvider>
           <Router>
-            {/* 
-              The key fix here: 
-              1. Remove the nested div with min-h-screen and move bg-opacity to the outer div
-              2. Use a proper "page-wrapper" structure that stretches with content
-            */}
             <div className="flex flex-col min-h-screen bg-gray-900 text-white"
                 style={{ 
                   backgroundImage: `url(${forestBg})`,
@@ -45,6 +41,8 @@ const App: React.FC = () => {
                 <p>GameMuse © {new Date().getFullYear()}</p>
                 <p className="mt-1">Powered by <a href="https://rawg.io/" target="_blank" rel="noopener noreferrer" className="text-fae hover:underline">RAWG API</a></p>
               </footer>
+              {/* Install Prompt */}
+              <InstallPrompt />
             </div>
           </Router>
         </CollectionsProvider>

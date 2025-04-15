@@ -6,15 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:pwa": "npm run generate-icons && tsc && vite build",
+    "generate-icons": "node generate-icons.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "vite preview --port 5000 --host",
+    "pwa-check": "npx lighthouse http://localhost:5000 --view --output-path=./lighthouse-report.html --preset=desktop",
+    "create-icon": "node -e \"const fs=require('fs');const path=require('path');const dir=path.join(process.cwd(),'src','assets');if(!fs.existsSync(dir)){fs.mkdirSync(dir,{recursive:true})};console.log('Created directory:',dir)\""
   },
   "dependencies": {
     "axios": "^1.6.2",
     "firebase": "^11.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0"
+    "react-router-dom": "^6.20.0",
+    "workbox-webpack-plugin": "^7.3.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
@@ -27,7 +33,9 @@
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
+    "lighthouse": "^11.0.0",
     "postcss": "^8.4.31",
+    "sharp": "^0.32.6",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"

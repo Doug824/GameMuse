@@ -9,7 +9,7 @@ interface CollectionsProps {
     activeGame?: Game;
     }
 
-    const Collections: React.FC<CollectionsProps> = ({ onSelectGame, activeGame }) => {
+    const Collections: React.FC<CollectionsProps> = ({ activeGame }) => {
     const { collections, isLoading, error, createNewCollection, deleteExistingCollection, addGame } = useCollections();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
