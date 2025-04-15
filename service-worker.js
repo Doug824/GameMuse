@@ -5,9 +5,9 @@ const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/manifest.json',
-    '/src/main.tsx',
-    '/src/App.tsx',
-    '/src/index.css',
+    '/assets/main.js',
+    '/assets/vendor.js',
+    '/assets/index.css',
     '/icons/icon-72x72.png',
     '/icons/icon-96x96.png',
     '/icons/icon-128x128.png',
@@ -40,26 +40,27 @@ self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME, API_CACHE_NAME];
     event.waitUntil(
         caches.keys().then(cacheNames => {
-        return Promise.all(
-            cacheNames.map(cacheName => {
-            if (!cacheWhitelist.includes(cacheName)) {
-                console.log('Deleting old cache:', cacheName);
-                return caches.delete(cacheName);
-            }
-            })
-        );
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (!cacheWhitelist.includes(cacheName)) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         }).then(() => self.clients.claim()) // Take control of clients immediately
     );
 });
 
 // Helper function to check if a request is an API request
 const isApiRequest = url => {
-    
+    // Check if the URL is for the RAWG API
+    return url.includes('api.rawg.io');
 };
 
 // Helper to determine if we should cache a successful response
 const shouldCacheResponse = (request, response) => {
-  // Only cache GET requests
+    // Only cache GET requests
     if (request.method !== 'GET') return false;
     
     // Don't cache response with status other than 200
@@ -79,59 +80,59 @@ self.addEventListener('fetch', event => {
     // Handle API requests (network-first with cache fallback)
     if (isApiRequest(event.request.url)) {
         event.respondWith(
-        fetch(event.request)
-            .then(response => {
-            // Clone the response to store in cache
-            const clonedResponse = response.clone();
-            
-            if (shouldCacheResponse(event.request, response)) {
-                caches.open(API_CACHE_NAME).then(cache => {
-                // Add timestamp to the response metadata
-                const timestampedResponse = clonedResponse.clone();
-                const responseInit = {
-                    headers: new Headers(clonedResponse.headers),
-                    status: clonedResponse.status,
-                    statusText: clonedResponse.statusText
-                };
-                
-                // Add timestamp header
-                responseInit.headers.set('x-cache-timestamp', Date.now().toString());
-                
-                clonedResponse.clone().text().then(body => {
-                    cache.put(event.request, new Response(body, responseInit));
-                });
-                });
-            }
-            
-            return response;
-            })
-            .catch(() => {
-            // If network request fails, try to return from cache
-            return caches.match(event.request);
-            })
+            fetch(event.request)
+                .then(response => {
+                    // Clone the response to store in cache
+                    const clonedResponse = response.clone();
+                    
+                    if (shouldCacheResponse(event.request, response)) {
+                        caches.open(API_CACHE_NAME).then(cache => {
+                            // Add timestamp to the response metadata
+                            const timestampedResponse = clonedResponse.clone();
+                            const responseInit = {
+                                headers: new Headers(clonedResponse.headers),
+                                status: clonedResponse.status,
+                                statusText: clonedResponse.statusText
+                            };
+                            
+                            // Add timestamp header
+                            responseInit.headers.set('x-cache-timestamp', Date.now().toString());
+                            
+                            clonedResponse.clone().text().then(body => {
+                                cache.put(event.request, new Response(body, responseInit));
+                            });
+                        });
+                    }
+                    
+                    return response;
+                })
+                .catch(() => {
+                    // If network request fails, try to return from cache
+                    return caches.match(event.request);
+                })
         );
     } 
-  // For static assets, use cache-first strategy
+    // For static assets, use cache-first strategy
     else {
         event.respondWith(
-        caches.match(event.request)
-            .then(cachedResponse => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            
-            // If not in cache, fetch from network
-            return fetch(event.request).then(response => {
-                // Cache the new response for future
-                if (shouldCacheResponse(event.request, response)) {
-                caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, response.clone());
-                });
-                }
-                
-                return response;
-            });
-            })
+            caches.match(event.request)
+                .then(cachedResponse => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    
+                    // If not in cache, fetch from network
+                    return fetch(event.request).then(response => {
+                        // Cache the new response for future
+                        if (shouldCacheResponse(event.request, response)) {
+                            caches.open(CACHE_NAME).then(cache => {
+                                cache.put(event.request, response.clone());
+                            });
+                        }
+                        
+                        return response;
+                    });
+                })
         );
     }
 });
@@ -154,9 +155,9 @@ function syncFavorites() {
         const syncComplete = true; // Placeholder
         
         if (syncComplete) {
-        resolve();
+            resolve();
         } else {
-        reject(new Error('Favorites sync failed'));
+            reject(new Error('Favorites sync failed'));
         }
     });
 }
@@ -168,29 +169,35 @@ function syncCollections() {
         const syncComplete = true; // Placeholder
         
         if (syncComplete) {
-        resolve();
+            resolve();
         } else {
-        reject(new Error('Collections sync failed'));
+            reject(new Error('Collections sync failed'));
         }
     });
 }
 
 // Handle push notifications
 self.addEventListener('push', event => {
-    const data = event.data.json();
+    if (!event.data) return;
     
-    const options = {
-        body: data.body,
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/badge-icon.png',
-        data: {
-        url: data.url || '/'
-        }
-    };
-    
-    event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
+    try {
+        const data = event.data.json();
+        
+        const options = {
+            body: data.body || 'New notification from GameMuse',
+            icon: '/icons/icon-192x192.png',
+            badge: '/icons/icon-72x72.png',
+            data: {
+                url: data.url || '/'
+            }
+        };
+        
+        event.waitUntil(
+            self.registration.showNotification(data.title || 'GameMuse', options)
+        );
+    } catch (error) {
+        console.error('Error processing push notification:', error);
+    }
 });
 
 // Handle notification click
@@ -198,6 +205,6 @@ self.addEventListener('notificationclick', event => {
     event.notification.close();
     
     event.waitUntil(
-        clients.openWindow(event.notification.data.url)
+        clients.openWindow(event.notification.data.url || '/')
     );
 });

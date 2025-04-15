@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Game, searchGames, FilterOptions, getGameDetails } from '../services/api';
+import { Game, searchGames, FilterOptions } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import GameList from './GameList';
 
@@ -14,60 +14,35 @@ const RecommendedGames: React.FC<RecommendedGamesProps> = ({ onGameSelect }) => 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchRecommendations = async () => {
-            // Only fetch recommendations if we have favorites
-            if (favorites.length === 0) {
-                return;
-            }
+        // Only fetch recommendations if we have favorites
+        if (!favorites || !Array.isArray(favorites) || favorites.length === 0) {
+            return;
+        }
 
+        const fetchRecommendations = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                // Collect tags and genres from favorites
-                let genreCounts: Record<number, number> = {};
-                let tagCounts: Record<number, number> = {};
-
-                // Get detailed info for favorites if needed
+                // Collect genres from favorites
+                const genreCounts: Record<string, number> = {};
+                
+                // Get genre information from favorites
                 for (const favorite of favorites) {
-                    // Count genres
-                    if (favorite.genres) {
+                    // Check if favorite has valid genres
+                    if (favorite && favorite.genres && Array.isArray(favorite.genres)) {
                         for (const genre of favorite.genres) {
-                            genreCounts[genre.id] = (genreCounts[genre.id] || 0) + 1;
-                        }
-                    }
-
-                    // Check if we need to fetch full details for this game
-                    if (!favorite.tags) {
-                        try {
-                            const details = await getGameDetails(favorite.id);
-                            
-                            // Count tags
-                            if (details.tags) {
-                                for (const tag of details.tags) {
-                                    tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
-                                }
+                            if (genre && typeof genre.id === 'number') {
+                                genreCounts[genre.id.toString()] = (genreCounts[genre.id.toString()] || 0) + 1;
                             }
-                        } catch (error) {
-                            console.error(`Error fetching details for favorite game ${favorite.id}:`, error);
-                        }
-                    } else {
-                        // Count tags directly if available
-                        for (const tag of favorite.tags) {
-                            tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1;
                         }
                     }
                 }
 
-                // Sort genres and tags by frequency
+                // Sort genres by frequency
                 const topGenres = Object.entries(genreCounts)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 2)
-                    .map(entry => entry[0]);
-
-                const topTags = Object.entries(tagCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 3)
                     .map(entry => entry[0]);
 
                 // Create filter options
@@ -79,11 +54,6 @@ const RecommendedGames: React.FC<RecommendedGamesProps> = ({ onGameSelect }) => 
                 // Add genres if we have them
                 if (topGenres.length > 0) {
                     filterOptions.genres = topGenres.join(',');
-                }
-
-                // Add tags if we have them
-                if (topTags.length > 0) {
-                    filterOptions.tags = topTags.join(',');
                 }
 
                 // Fetch recommended games
@@ -99,16 +69,18 @@ const RecommendedGames: React.FC<RecommendedGamesProps> = ({ onGameSelect }) => 
             } catch (error) {
                 console.error('Error fetching recommended games:', error);
                 setError('Could not load recommendations');
+                setRecommendedGames([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchRecommendations();
-    }, [favorites]);
+    }, [favorites]); // Only re-run when favorites change
 
     // Don't render anything if there are no favorites or recommendations
-    if (favorites.length === 0 || (recommendedGames.length === 0 && !loading && !error)) {
+    if (!favorites || !Array.isArray(favorites) || favorites.length === 0 || 
+        (recommendedGames.length === 0 && !loading && !error)) {
         return null;
     }
 

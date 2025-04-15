@@ -24,35 +24,34 @@ const Home: React.FC = () => {
         if (!apiKey) {
             setIsApiKeyMissing(true);
             setError('API key is missing. Please configure your .env file with a valid RAWG API key.');
+            return;
         }
+
+        fetchPopularGames();
     }, []);
 
     // Popular games to show on initial load
-    useEffect(() => {
-        const fetchPopularGames = async () => {
-            // Skip if API key is missing
-            if (isApiKeyMissing) return;
-            
-            try {
-                setLoading(true);
-                setError(null);
-                const data = await searchGames('', { 
-                    ordering: '-metacritic', 
-                    page_size: 20 
-                });
-                setGames(data.results || []);
-                setNoResults(data.results?.length === 0);
-            } catch (error) {
-                console.error('Error fetching popular games:', error);
-                setError('Failed to load popular games. Please check your API key and connection.');
-                setGames([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPopularGames();
-    }, [isApiKeyMissing]);
+    const fetchPopularGames = async () => {
+        // Skip if API key is missing
+        if (isApiKeyMissing) return;
+        
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await searchGames('', { 
+                ordering: '-metacritic', 
+                page_size: 20 
+            });
+            setGames(data.results || []);
+            setNoResults(data.results?.length === 0);
+        } catch (error) {
+            console.error('Error fetching popular games:', error);
+            setError('Failed to load popular games. Please check your API key and connection.');
+            setGames([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSearch = async (query: string) => {
         // Don't attempt search if API key is missing
@@ -141,8 +140,10 @@ const Home: React.FC = () => {
                 
                 <Filters onFilterChange={handleFilterChange} />
                 
-                {/* New Recommended Games section */}
-                <RecommendedGames onGameSelect={handleGameSelect} />
+                {/* New Recommended Games section with error handling */}
+                <ErrorBoundary fallback={<div className="mb-6 p-4 bg-red-800 bg-opacity-50 rounded-lg">Error loading recommendations</div>}>
+                    <RecommendedGames onGameSelect={handleGameSelect} />
+                </ErrorBoundary>
                 
                 <div className="mb-4 card-fantasy p-3 rounded-lg">
                     <h2 className="text-lg sm:text-xl font-semibold text-white">
@@ -171,5 +172,26 @@ const Home: React.FC = () => {
         </div>
     );
 };
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component<{children: React.ReactNode, fallback: React.ReactNode}> {
+    state = { hasError: false };
+    
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+    
+    componentDidCatch(error: Error) {
+        console.error("Error caught by boundary:", error);
+    }
+    
+    render() {
+        if (this.state.hasError) {
+            return this.props.fallback;
+        }
+        
+        return this.props.children;
+    }
+}
 
 export default Home;

@@ -1,10 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/app-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>GameMuse - Discover Your Next Favorite Game</title>
     <meta name="description" content="Discover and track your favorite video games with GameMuse, a beautifully designed game discovery app." />
     <meta name="theme-color" content="#064e3b" />
     <meta name="mobile-web-app-capable" content="yes">
@@ -24,11 +23,9 @@
     <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120.png" />
     <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76.png" />
     
-    <!-- iPhone X (1125px x 2436px) -->
+    <!-- iPhone splash screens -->
     <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-splash-1125-2436.png" />
-    <!-- iPhone 8, 7, 6s, 6 (750px x 1334px) -->
     <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-splash-750-1334.png" />
-    <!-- iPhone 8 Plus, 7 Plus, 6s Plus, 6 Plus (1242px x 2208px) -->
     <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-splash-1242-2208.png" />
     
     <!-- Open Graph / Social Media -->
@@ -37,23 +34,123 @@
     <meta property="og:description" content="Find, track, and organize your video game collection with GameMuse." />
     <meta property="og:image" content="/icons/og-image.png" />
     <meta property="og:url" content="https://gamemuse.example.com" />
+    
+    <title>GameMuse - Discover Your Next Favorite Game</title>
+    
+    <!-- Error catching -->
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('JavaScript error:', e);
+        var errorDiv = document.createElement('div');
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '0';
+        errorDiv.style.left = '0';
+        errorDiv.style.right = '0';
+        errorDiv.style.backgroundColor = '#e53e3e';
+        errorDiv.style.color = 'white';
+        errorDiv.style.padding = '10px';
+        errorDiv.style.zIndex = '9999';
+        errorDiv.innerHTML = '<b>Error:</b> ' + e.message + ' at ' + e.filename + ':' + e.lineno;
+        document.body.appendChild(errorDiv);
+      });
+    </script>
+    
+    <!-- Find the correct CSS file -->
+    <script>
+      function loadCSS() {
+        // Try to find CSS files in the /assets directory
+        fetch('/assets')
+          .then(response => response.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const links = doc.querySelectorAll('a');
+            
+            // Find CSS files
+            const cssFiles = Array.from(links)
+              .map(link => link.href)
+              .filter(href => href.endsWith('.css'));
+              
+            if (cssFiles.length > 0) {
+              // Create link element for the first CSS file
+              const link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = cssFiles[0];
+              document.head.appendChild(link);
+              console.log('Loaded CSS:', cssFiles[0]);
+            }
+          })
+          .catch(error => {
+            console.error('Failed to auto-discover CSS:', error);
+          });
+      }
+      
+      // Call function after page load
+      window.addEventListener('DOMContentLoaded', loadCSS);
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Find the correct JS file -->
+    <script>
+      function loadJS() {
+        // Try to find JS files in the /assets directory
+        fetch('/assets')
+          .then(response => response.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const links = doc.querySelectorAll('a');
+            
+            // Find JS files
+            const jsFiles = Array.from(links)
+              .map(link => link.href)
+              .filter(href => href.endsWith('.js'));
+              
+            if (jsFiles.length > 0) {
+              // Create script element for the first JS file
+              const script = document.createElement('script');
+              script.type = 'module';
+              script.src = jsFiles[0];
+              document.body.appendChild(script);
+              console.log('Loaded JS:', jsFiles[0]);
+            } else {
+              document.getElementById('root').innerHTML = '<div style="padding: 20px; background-color: #e53e3e; color: white;"><h1>Error</h1><p>No JavaScript files found in /assets directory.</p></div>';
+            }
+          })
+          .catch(error => {
+            console.error('Failed to auto-discover JS:', error);
+            document.getElementById('root').innerHTML = '<div style="padding: 20px; background-color: #e53e3e; color: white;"><h1>Error</h1><p>Failed to find JavaScript files: ' + error.message + '</p></div>';
+          });
+      }
+      
+      // Call function after page load
+      window.addEventListener('DOMContentLoaded', loadJS);
+    </script>
+    
     <!-- Register Service Worker -->
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('ServiceWorker registered with scope:', registration.scope);
-            })
-            .catch(error => {
-              console.error('ServiceWorker registration failed:', error);
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/service-worker.js', {
+              scope: '/'
             });
+            console.log('ServiceWorker registered with scope:', registration.scope);
+          } catch (error) {
+            console.error('ServiceWorker registration failed:', error);
+          }
         });
       }
     </script>
+    
+    <!-- Fallback content if JavaScript fails -->
+    <noscript>
+      <div style="padding: 20px; background-color: #e53e3e; color: white;">
+        <h1>JavaScript Disabled</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
   </body>
 </html>
