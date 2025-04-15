@@ -40,7 +40,7 @@ export default {
         '18': '4.5rem',
       },
       boxShadow: {
-        'fantasy': '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(204, 50, 83, 0.2)',
+        'fantasy': '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(153, 50, 204, 0.2)',
         'fantasy-hover': '0 8px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(153, 50, 204, 0.5)',
       },
     },

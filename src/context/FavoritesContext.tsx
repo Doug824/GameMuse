@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { Game } from '../services/api';
 
 interface FavoritesContextType {
@@ -20,85 +20,43 @@ export const useFavorites = (): FavoritesContextType => {
         throw new Error('useFavorites must be used within a FavoritesProvider');
     }
     return context;
-};
+    };
 
-export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }) => {
+    export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
     const [favorites, setFavorites] = useState<Game[]>([]);
-    const [isInitialized, setIsInitialized] = useState(false);
 
     // Load favorites from localStorage on initial render
     useEffect(() => {
+        const storedFavorites = localStorage.getItem('gameMuseFavorites');
+        if (storedFavorites) {
         try {
-            const storedFavorites = localStorage.getItem('gameMuseFavorites');
-            if (storedFavorites) {
-                try {
-                    const parsedFavorites = JSON.parse(storedFavorites);
-                    // Validate that parsedFavorites is actually an array
-                    if (Array.isArray(parsedFavorites)) {
-                        setFavorites(parsedFavorites);
-                    } else {
-                        console.error('Stored favorites is not an array, resetting to empty array');
-                        localStorage.removeItem('gameMuseFavorites');
-                        setFavorites([]);
-                    }
-                } catch (error) {
-                    console.error('Error parsing favorites from localStorage:', error);
-                    localStorage.removeItem('gameMuseFavorites');
-                    setFavorites([]);
-                }
-            }
+            setFavorites(JSON.parse(storedFavorites));
         } catch (error) {
-            console.error('Error accessing localStorage:', error);
-            setFavorites([]);
-        } finally {
-            setIsInitialized(true);
+            console.error('Error parsing favorites from localStorage:', error);
+            localStorage.removeItem('gameMuseFavorites');
+        }
         }
     }, []);
 
     // Save favorites to localStorage whenever they change
     useEffect(() => {
-        // Only save after initial load to prevent potential loops
-        if (isInitialized) {
-            try {
-                localStorage.setItem('gameMuseFavorites', JSON.stringify(favorites));
-            } catch (error) {
-                console.error('Error saving favorites to localStorage:', error);
-            }
-        }
-    }, [favorites, isInitialized]);
+        localStorage.setItem('gameMuseFavorites', JSON.stringify(favorites));
+    }, [favorites]);
 
     // Add a game to favorites
     const addFavorite = (game: Game) => {
         setFavorites((prevFavorites) => {
-            // Check if game is already in favorites to avoid duplicates
-            const exists = prevFavorites.some((fav) => fav.id === game.id);
-            if (exists) return prevFavorites;
-            
-            // Create a safe copy of the game object with only necessary properties
-            const gameCopy = {
-                id: game.id,
-                name: game.name,
-                background_image: game.background_image,
-                released: game.released,
-                metacritic: game.metacritic,
-                genres: game.genres ? [...game.genres] : [],
-                platforms: game.platforms ? game.platforms.map(p => ({
-                    platform: {
-                        id: p.platform.id,
-                        name: p.platform.name,
-                        slug: p.platform.slug
-                    }
-                })) : undefined
-            };
-            
-            return [...prevFavorites, gameCopy];
+        // Check if game is already in favorites to avoid duplicates
+        const exists = prevFavorites.some((fav) => fav.id === game.id);
+        if (exists) return prevFavorites;
+        return [...prevFavorites, game];
         });
     };
 
     // Remove a game from favorites
     const removeFavorite = (gameId: number) => {
         setFavorites((prevFavorites) => 
-            prevFavorites.filter((game) => game.id !== gameId)
+        prevFavorites.filter((game) => game.id !== gameId)
         );
     };
 
@@ -116,7 +74,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
 
     return (
         <FavoritesContext.Provider value={value}>
-            {children}
+        {children}
         </FavoritesContext.Provider>
     );
 };
