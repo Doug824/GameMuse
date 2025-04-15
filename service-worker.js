@@ -17,7 +17,8 @@ const STATIC_ASSETS = [
   '/icons/icon-192x192.png',
   '/icons/icon-384x384.png',
   '/icons/icon-512x512.png',
-  '/assets/forest-bg.png'
+  '/assets/forest-bg.png',
+  '/assets/app-icon.png'
 ];
 
 // API response cache
