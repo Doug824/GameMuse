@@ -9,7 +9,7 @@ import CollectionDetail from './Pages/CollectionDetail';
 import Header from './components/Header';
 import InstallPrompt from './components/InstallPrompt';
 import forestBg from './assets/forest-bg.png';
-import './styles/mobile.css'; // Import mobile-specific styles
+import './styles/mobile.css';
 
 const App: React.FC = () => {
   return (
