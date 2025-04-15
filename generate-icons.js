@@ -1,7 +1,3 @@
-// generate-icons.js
-// This script generates icon files of different sizes for PWA
-// You need to install sharp: npm install sharp
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

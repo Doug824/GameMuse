@@ -12,6 +12,8 @@ interface FavoritesProviderProps {
     children: ReactNode;
 }
 
+const STORAGE_KEY = 'gameMuseFavorites';
+
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
 export const useFavorites = (): FavoritesContextType => {
@@ -20,43 +22,59 @@ export const useFavorites = (): FavoritesContextType => {
         throw new Error('useFavorites must be used within a FavoritesProvider');
     }
     return context;
-    };
+};
 
-    export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
+export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
     const [favorites, setFavorites] = useState<Game[]>([]);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Load favorites from localStorage on initial render
     useEffect(() => {
-        const storedFavorites = localStorage.getItem('gameMuseFavorites');
-        if (storedFavorites) {
         try {
-            setFavorites(JSON.parse(storedFavorites));
+            const storedFavorites = localStorage.getItem(STORAGE_KEY);
+            
+            if (storedFavorites) {
+                const parsedFavorites = JSON.parse(storedFavorites);
+                setFavorites(parsedFavorites);
+                console.log('Loaded favorites from localStorage:', parsedFavorites.length);
+            }
         } catch (error) {
             console.error('Error parsing favorites from localStorage:', error);
-            localStorage.removeItem('gameMuseFavorites');
-        }
+            localStorage.removeItem(STORAGE_KEY);
+        } finally {
+            setIsInitialized(true);
         }
     }, []);
 
     // Save favorites to localStorage whenever they change
     useEffect(() => {
-        localStorage.setItem('gameMuseFavorites', JSON.stringify(favorites));
-    }, [favorites]);
+        // Only save after initial load to prevent overwriting
+        if (isInitialized) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+                console.log('Saved favorites to localStorage:', favorites.length);
+            } catch (error) {
+                console.error('Error saving favorites to localStorage:', error);
+            }
+        }
+    }, [favorites, isInitialized]);
 
     // Add a game to favorites
     const addFavorite = (game: Game) => {
         setFavorites((prevFavorites) => {
-        // Check if game is already in favorites to avoid duplicates
-        const exists = prevFavorites.some((fav) => fav.id === game.id);
-        if (exists) return prevFavorites;
-        return [...prevFavorites, game];
+            // Check if game is already in favorites to avoid duplicates
+            const exists = prevFavorites.some((fav) => fav.id === game.id);
+            if (exists) return prevFavorites;
+            
+            const newFavorites = [...prevFavorites, game];
+            return newFavorites;
         });
     };
 
     // Remove a game from favorites
     const removeFavorite = (gameId: number) => {
         setFavorites((prevFavorites) => 
-        prevFavorites.filter((game) => game.id !== gameId)
+            prevFavorites.filter((game) => game.id !== gameId)
         );
     };
 
@@ -74,7 +92,7 @@ export const useFavorites = (): FavoritesContextType => {
 
     return (
         <FavoritesContext.Provider value={value}>
-        {children}
+            {children}
         </FavoritesContext.Provider>
     );
 };
