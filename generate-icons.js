@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 // Create icons directory if it doesn't exist
 const iconsDir = path.join(__dirname, 'public', 'icons');
 if (!fs.existsSync(iconsDir)) {
-    fs.mkdirSync(iconsDir, { recursive: true });
+  fs.mkdirSync(iconsDir, { recursive: true });
 }
 
 // Source icon file - should be at least 512x512 png
@@ -51,20 +51,23 @@ async function generateIcons() {
             .toFile(path.join(iconsDir, fileName));
             
         console.log(`✅ Generated ${fileName}`);
-    }
-    
-    // Generate iOS splash screens
-    const splashScreens = [
-      { width: 1125, height: 2436, name: 'apple-splash-1125-2436.png' }, // iPhone X
-      { width: 750, height: 1334, name: 'apple-splash-750-1334.png' },   // iPhone 8, 7, 6s, 6
-      { width: 1242, height: 2208, name: 'apple-splash-1242-2208.png' }  // iPhone 8+, 7+, 6s+, 6+
-    ];
-    
-    for (const screen of splashScreens) {
+        }
+        
+        // Generate iOS splash screens
+        const splashScreens = [
+        { width: 1125, height: 2436, name: 'apple-splash-1125-2436.png' }, // iPhone X
+        { width: 750, height: 1334, name: 'apple-splash-750-1334.png' },   // iPhone 8, 7, 6s, 6
+        { width: 1242, height: 2208, name: 'apple-splash-1242-2208.png' }  // iPhone 8+, 7+, 6s+, 6+
+        ];
+        
+        for (const screen of splashScreens) {
+        // Use a fixed size for the icon (256px) to avoid calculation errors
+        const iconSize = 256;
+        
         await sharp(sourceIcon)
             .resize({
-            width: Math.min(screen.width, screen.height) * 0.5, // Icon size is 50% of the smaller dimension
-            height: Math.min(screen.width, screen.height) * 0.5,
+            width: iconSize,
+            height: iconSize,
             fit: 'contain',
             background: { r: 0, g: 0, b: 0, alpha: 0 } // Transparent
             })
@@ -77,8 +80,8 @@ async function generateIcons() {
             {
                 input: await sharp(sourceIcon)
                 .resize({
-                    width: Math.min(screen.width, screen.height) * 0.5,
-                    height: Math.min(screen.width, screen.height) * 0.5,
+                    width: iconSize,
+                    height: iconSize,
                     fit: 'contain',
                     background: { r: 0, g: 0, b: 0, alpha: 0 }
                 })

@@ -11,7 +11,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "serve": "vite preview --port 5000 --host",
-    "pwa-check": "npx lighthouse http://localhost:5000 --view --output-path=./lighthouse-report.html --preset=desktop"
+    "pwa-check": "npx lighthouse http://localhost:5000 --view --output-path=./lighthouse-report.html --preset=desktop",
+    "create-icon": "node -e \"const fs=require('fs');const path=require('path');const dir=path.join(process.cwd(),'src','assets');if(!fs.existsSync(dir)){fs.mkdirSync(dir,{recursive:true})};console.log('Created directory:',dir)\""
   },
   "dependencies": {
     "axios": "^1.6.2",
