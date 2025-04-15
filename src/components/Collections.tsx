@@ -5,11 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { Game } from '../services/api';
 
 interface CollectionsProps {
-    onSelectGame?: (gameId: number) => void;
     activeGame?: Game;
-    }
+}
 
-    const Collections: React.FC<CollectionsProps> = ({ activeGame }) => {
+const Collections: React.FC<CollectionsProps> = ({ activeGame }) => {
     const { collections, isLoading, error, createNewCollection, deleteExistingCollection, addGame } = useCollections();
     const { currentUser } = useAuth();
     const navigate = useNavigate();

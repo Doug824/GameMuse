@@ -5,6 +5,7 @@ import SearchBar from '../components/SearchBar';
 import GameList from '../components/GameList';
 import Filters from '../components/Filters';
 import Favorites from '../components/Favorites';
+import RecommendedGames from '../components/RecommendedGames';
 import CollectionsButton from '../components/CollectionsButton';
 
 const Home: React.FC = () => {
@@ -139,6 +140,9 @@ const Home: React.FC = () => {
                 </div>
                 
                 <Filters onFilterChange={handleFilterChange} />
+                
+                {/* New Recommended Games section */}
+                <RecommendedGames onGameSelect={handleGameSelect} />
                 
                 <div className="mb-4 card-fantasy p-3 rounded-lg">
                     <h2 className="text-lg sm:text-xl font-semibold text-white">

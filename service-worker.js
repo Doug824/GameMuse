@@ -97,7 +97,7 @@ self.addEventListener('fetch', event => {
                 // Add timestamp header
                 responseInit.headers.set('x-cache-timestamp', Date.now().toString());
                 
-                clonedResponse.text().then(body => {
+                clonedResponse.clone().text().then(body => {
                     cache.put(event.request, new Response(body, responseInit));
                 });
                 });
