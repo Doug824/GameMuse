@@ -6,6 +6,7 @@ import GameList from '../components/GameList';
 import Filters from '../components/Filters';
 import Favorites from '../components/Favorites';
 import CollectionsButton from '../components/CollectionsButton';
+import { SearchProvider } from './context/SearchContext';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
