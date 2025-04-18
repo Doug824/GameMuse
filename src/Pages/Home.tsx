@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { searchGames, Game, FilterOptions } from '../services/api';
 import SearchBar from '../components/SearchBar';
 import GameList from '../components/GameList';
 import Filters from '../components/Filters';
 import Favorites from '../components/Favorites';
 import CollectionsButton from '../components/CollectionsButton';
-import { SearchProvider } from './context/SearchContext';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
-    const [games, setGames] = useState<Game[]>([]);
+    const location = useLocation();
+    
+    // Check if we have state from the location (returning from game details)
+    const locationState = location.state as { 
+        searchResults?: Game[], 
+        searchQuery?: string,
+        filterOptions?: FilterOptions 
+    } | null;
+    
+    // Initial state from location if available
+    const [games, setGames] = useState<Game[]>(locationState?.searchResults || []);
     const [loading, setLoading] = useState<boolean>(false);
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const [filters, setFilters] = useState<FilterOptions>({});
+    const [searchQuery, setSearchQuery] = useState<string>(locationState?.searchQuery || '');
+    const [filters, setFilters] = useState<FilterOptions>(locationState?.filterOptions || {});
     const [noResults, setNoResults] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [isApiKeyMissing, setIsApiKeyMissing] = useState<boolean>(false);
@@ -27,11 +36,11 @@ const Home: React.FC = () => {
         }
     }, []);
 
-    // Popular games to show on initial load
+    // Only fetch popular games if we don't have search results already
     useEffect(() => {
         const fetchPopularGames = async () => {
-            // Skip if API key is missing
-            if (isApiKeyMissing) return;
+            // Skip if API key is missing or we already have search results
+            if (isApiKeyMissing || games.length > 0) return;
             
             try {
                 setLoading(true);
@@ -52,7 +61,7 @@ const Home: React.FC = () => {
         };
 
         fetchPopularGames();
-    }, [isApiKeyMissing]);
+    }, [isApiKeyMissing, games.length]);
 
     const handleSearch = async (query: string) => {
         // Don't attempt search if API key is missing
@@ -107,7 +116,14 @@ const Home: React.FC = () => {
     };
 
     const handleGameSelect = (gameId: number) => {
-        navigate(`/game/${gameId}`);
+        // Pass the current search state when navigating
+        navigate(`/game/${gameId}`, {
+            state: {
+                searchResults: games,
+                searchQuery: searchQuery,
+                filterOptions: filters
+            }
+        });
     };
 
     return (
@@ -131,7 +147,7 @@ const Home: React.FC = () => {
                 </div>
             )}
             
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
             
             <div className="mt-4 sm:mt-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
@@ -139,7 +155,7 @@ const Home: React.FC = () => {
                     <CollectionsButton />
                 </div>
                 
-                <Filters onFilterChange={handleFilterChange} />
+                <Filters onFilterChange={handleFilterChange} initialFilters={filters} />
                 
                 <div className="mb-4 card-fantasy p-3 rounded-lg">
                     <h2 className="text-lg sm:text-xl font-semibold text-white">
