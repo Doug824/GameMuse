@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
 import { CollectionsProvider } from './context/CollectionsContext';
+import { SearchProvider } from './context/SearchContext';
 import Home from './Pages/Home';
 import GameDetails from './Pages/GameDetails';
 import CollectionDetail from './Pages/CollectionDetail';
 import Header from './components/Header';
 import InstallPrompt from './components/InstallPrompt';
 import forestBg from './assets/forest-bg.png';
-import './styles/mobile.css'; // Import mobile-specific styles
+import './styles/mobile.css';
 
 const App: React.FC = () => {
   return (
