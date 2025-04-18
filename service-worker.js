@@ -22,7 +22,7 @@ const STATIC_ASSETS = [
 ];
 
 // API response cache
-const API_CACHE_NAME = 'gamemuse-api-v1';
+const API_CACHE_NAME = 'gamemuse-api-v1.1';
 const API_CACHE_MAX_AGE = 60 * 60 * 24; // 24 hours in seconds
 
 // Install event - cache static assets

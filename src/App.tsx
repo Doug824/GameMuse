@@ -39,6 +39,7 @@ const App: React.FC = () => {
               {/* Mobile-friendly footer */}
               <footer className="mt-8 sm:mt-12 text-center text-gray-400 text-xs sm:text-sm pb-6">
                 <p>GameMuse © {new Date().getFullYear()}</p>
+                <p className="mt-1">Created by Doug Hagan</p>
                 <p className="mt-1">Powered by <a href="https://rawg.io/" target="_blank" rel="noopener noreferrer" className="text-fae hover:underline">RAWG API</a></p>
               </footer>
               {/* Install Prompt */}
