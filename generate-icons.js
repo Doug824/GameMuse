@@ -46,7 +46,7 @@ async function generateIcons() {
           width: size,
           height: size,
           fit: 'contain',
-          background: { r: 153, g: 50, b: 204, alpha: 1 } // Purple background
+          background: { r: 92, g: 158, b: 117, alpha: 1 } // Purple background
         })
         .toFile(path.join(iconsDir, fileName));
         
@@ -126,14 +126,14 @@ async function generateMaskableIcon() {
         width: minDimension - (padding * 2),
         height: minDimension - (padding * 2),
         fit: 'contain',
-        background: { r: 153, g: 50, b: 204, alpha: 1 } // Purple background #9932cc
+        background: { r: 92, g: 158, b: 117, alpha: 1 }
       })
       .extend({
         top: padding,
         bottom: padding,
         left: padding,
         right: padding,
-        background: { r: 153, g: 50, b: 204, alpha: 1 }
+        background: { r: 92, g: 158, b: 117, alpha: 1 }
       })
       .toFile(path.join(iconsDir, 'maskable-icon.png'));
     
