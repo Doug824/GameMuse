@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getGameDetails, getGameScreenshots, getSimilarGames, getGamesByDeveloper, Game, Screenshot } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
+import { useSearch } from '../context/SearchContext';
 import GameList from '../components/GameList';
 import Collections from '../components/Collections';
+
 
 interface GameDetailsParams {
     id: string;
