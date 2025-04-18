@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { getGameDetails, getGameScreenshots, getSimilarGames, getGamesByDeveloper, Game, Screenshot } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
-import { useSearch } from '../context/SearchContext';
 import GameList from '../components/GameList';
 import Collections from '../components/Collections';
-
 
 interface GameDetailsParams {
     id: string;
@@ -14,7 +12,15 @@ interface GameDetailsParams {
 const GameDetails: React.FC = () => {
     const { id } = useParams<keyof GameDetailsParams>() as GameDetailsParams;
     const navigate = useNavigate();
+    const location = useLocation();
     const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+    
+    // Get state from the location if available (from navigation)
+    const locationState = location.state as {
+        searchResults?: Game[];
+        searchQuery?: string;
+        filterOptions?: any;
+    } | null;
     
     const [game, setGame] = useState<Game | null>(null);
     const [screenshots, setScreenshots] = useState<Screenshot[]>([]);
@@ -115,7 +121,21 @@ const GameDetails: React.FC = () => {
     };
 
     const handleSimilarGameSelect = (gameId: number) => {
-        navigate(`/game/${gameId}`);
+        // When selecting a similar game, we want to preserve the original search state if it exists
+        navigate(`/game/${gameId}`, { 
+            state: locationState 
+        });
+    };
+
+    // Handle back button click - preserve search state if available
+    const handleBackClick = () => {
+        if (locationState?.searchResults?.length) {
+            // If we came from search results, pass back to home with the search state
+            navigate('/', { state: locationState });
+        } else {
+            // Otherwise just go back to previous page
+            navigate(-1);
+        }
     };
 
     if (loading) {
@@ -139,7 +159,7 @@ const GameDetails: React.FC = () => {
                     <h2 className="text-xl font-semibold mb-2">Error</h2>
                     <p>{error}</p>
                     <button 
-                        onClick={() => navigate('/')}
+                        onClick={handleBackClick}
                         className="mt-4 bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded transition"
                     >
                         Back to Home
@@ -173,7 +193,7 @@ const GameDetails: React.FC = () => {
         <div className="container mx-auto px-4 py-4 sm:py-8">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <button 
-                    onClick={() => navigate(-1)}
+                    onClick={handleBackClick}
                     className="flex items-center text-gray-400 hover:text-white transition p-2 -ml-2"
                     aria-label="Go back"
                 >
