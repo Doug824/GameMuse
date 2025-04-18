@@ -3,6 +3,7 @@ import { getGenres, getPlatforms, Genre, Platform, FilterOptions } from '../serv
 
 interface FiltersProps {
     onFilterChange: (filters: FilterOptions) => void;
+    initialFilters?: FilterOptions;
 }
 
 interface FilterState {
@@ -12,18 +13,21 @@ interface FilterState {
     dates: string;
 }
 
-const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+const Filters: React.FC<FiltersProps> = ({ onFilterChange, initialFilters = {} }) => {
     const [showFilters, setShowFilters] = useState<boolean>(false);
     const [genres, setGenres] = useState<Genre[]>([]);
     const [platforms, setPlatforms] = useState<Platform[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     
-    const [filters, setFilters] = useState<FilterState>({
-        genres: [],
-        platforms: [],
-        ordering: '',
-        dates: ''
-    });
+    // Convert initialFilters to our internal state format
+    const initialFilterState: FilterState = {
+        genres: initialFilters.genres ? initialFilters.genres.split(',') : [],
+        platforms: initialFilters.platforms ? initialFilters.platforms.split(',') : [],
+        ordering: initialFilters.ordering || '',
+        dates: initialFilters.dates || ''
+    };
+    
+    const [filters, setFilters] = useState<FilterState>(initialFilterState);
 
     // Mobile optimization: track if advanced filters are shown
     const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
@@ -47,6 +51,18 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 
         fetchFilters();
     }, []);
+
+    // Update filters when initialFilters changes
+    useEffect(() => {
+        const newFilterState: FilterState = {
+            genres: initialFilters.genres ? initialFilters.genres.split(',') : [],
+            platforms: initialFilters.platforms ? initialFilters.platforms.split(',') : [],
+            ordering: initialFilters.ordering || '',
+            dates: initialFilters.dates || ''
+        };
+        
+        setFilters(newFilterState);
+    }, [initialFilters]);
 
     const handleFilterChange = (type: keyof FilterState, value: string) => {
         setFilters(prev => {
