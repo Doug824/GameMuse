@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SearchProvider } from './context/SearchContext';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
