@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
 import { CollectionsProvider } from './context/CollectionsContext';
-import { SearchProvider } from './context/SearchContext';
 import Home from './Pages/Home';
 import GameDetails from './Pages/GameDetails';
 import CollectionDetail from './Pages/CollectionDetail';
