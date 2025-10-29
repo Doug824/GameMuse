@@ -1,14 +1,11 @@
 // Service Worker for GameMuse PWA
-const CACHE_NAME = 'gamemuse-v1';
+const CACHE_NAME = 'gamemuse-v2';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/src/main.tsx',
-  '/src/App.tsx',
-  '/src/index.css',
   '/icons/icon-72x72.png',
   '/icons/icon-96x96.png',
   '/icons/icon-128x128.png',
@@ -22,7 +19,7 @@ const STATIC_ASSETS = [
 ];
 
 // API response cache
-const API_CACHE_NAME = 'gamemuse-api-v1.2';
+const API_CACHE_NAME = 'gamemuse-api-v1.3';
 const API_CACHE_MAX_AGE = 60 * 60 * 24; // 24 hours in seconds
 
 // Install event - cache static assets
@@ -121,16 +118,19 @@ self.addEventListener('fetch', event => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          
+
           // If not in cache, fetch from network
           return fetch(event.request).then(response => {
+            // Clone the response BEFORE using it
+            const responseToCache = response.clone();
+
             // Cache the new response for future
             if (shouldCacheResponse(event.request, response)) {
               caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, response.clone());
+                cache.put(event.request, responseToCache);
               });
             }
-            
+
             return response;
           });
         })
