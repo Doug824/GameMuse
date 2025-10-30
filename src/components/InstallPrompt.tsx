@@ -114,9 +114,14 @@ const InstallPrompt: React.FC = () => {
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-white mb-1">Install GameMuse</h3>
               {isIOS ? (
-                <p className="text-gray-300 text-sm">
-                  Install this app on your iPhone: tap <span className="inline-block"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-fae inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg></span> and then "Add to Home Screen".
-                </p>
+                <div className="text-gray-300 text-sm space-y-2">
+                  <p className="font-semibold text-fae">To install GameMuse:</p>
+                  <ol className="list-decimal list-inside space-y-1 text-xs">
+                    <li>Tap the <span className="inline-flex items-center gap-1 bg-gray-800 px-1.5 py-0.5 rounded">Share <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-fae inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg></span> button at the bottom of your screen</li>
+                    <li>Scroll down and tap <span className="bg-gray-800 px-1.5 py-0.5 rounded text-fae">"Add to Home Screen"</span></li>
+                    <li>Tap <span className="bg-gray-800 px-1.5 py-0.5 rounded text-fae">"Add"</span> in the top right</li>
+                  </ol>
+                </div>
               ) : (
                 <p className="text-gray-300 text-sm">
                   Install this app on your device for quick and easy access when you're on the go.
