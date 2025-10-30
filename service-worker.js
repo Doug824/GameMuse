@@ -1,5 +1,5 @@
 // Service Worker for GameMuse PWA
-const CACHE_NAME = 'gamemuse-v2';
+const CACHE_NAME = 'gamemuse-v3';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
